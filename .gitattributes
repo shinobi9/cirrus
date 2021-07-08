@@ -1,0 +1,5 @@
+* text=auto
+gradlew eol=lf
+*.kt eol=lf
+*.kts eol=lf
+*.properties eol=lf
