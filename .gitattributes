@@ -3,3 +3,7 @@ gradlew eol=lf
 *.kt eol=lf
 *.kts eol=lf
 *.properties eol=lf
+*.conf eol=lf
+*.xml eol=lf
+.gitignore eol=lf
+.gitattributes text eol=lf
