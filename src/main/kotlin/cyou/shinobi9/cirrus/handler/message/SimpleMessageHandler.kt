@@ -6,7 +6,7 @@ import kotlinx.serialization.json.*
 import java.lang.RuntimeException
 
 interface SimpleMessageHandler : MessageHandler {
-    fun onReceiveDanmu(block: (user: String, said: String) -> Unit)
+    fun onReceiveDanmaku(block: (user: String, said: String) -> Unit)
     fun onReceiveGift(block: (user: String, num: Int, giftName: String) -> Unit)
     fun onVipEnterInLiveRoom(block: (user: String) -> Unit)
     fun onGuardEnterInLiveRoom(block: (user: String) -> Unit)
@@ -24,7 +24,7 @@ class SimpleMessageHandlerImpl(
     private var unknownTypeMessage: ((message: String) -> Unit)? = null,
     private var error: ((message: String, e: MessageException) -> Unit)? = null
 ) : SimpleMessageHandler {
-    override fun onReceiveDanmu(block: (user: String, said: String) -> Unit) {
+    override fun onReceiveDanmaku(block: (user: String, said: String) -> Unit) {
         receiveDanmu = block
     }
 

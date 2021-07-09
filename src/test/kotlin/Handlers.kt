@@ -12,7 +12,7 @@ fun simpleMessage() {
     val cirrus = Cirrus(
         CirrusConfig(
             messageHandler = simpleMessageHandler {
-                onReceiveDanmu { user, said ->
+                onReceiveDanmaku { user, said ->
                     println("$user : $said")
                 }
             }
