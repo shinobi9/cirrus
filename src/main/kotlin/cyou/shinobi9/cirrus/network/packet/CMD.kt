@@ -80,7 +80,7 @@ enum class CMD(val desc: String) {
     WISH_BOTTLE("许愿瓶"),
 
     ONLINE_RANK_COUNT(""),
-    INTERACT_WORD(""),
+    INTERACT_WORD("进入直播间"),
 
     UNKNOWN("待补充，暂时无法处理");
 

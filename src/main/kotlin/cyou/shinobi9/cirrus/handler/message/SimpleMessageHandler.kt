@@ -16,7 +16,7 @@ interface SimpleMessageHandler : MessageHandler {
 }
 
 class SimpleMessageHandlerImpl(
-    private var receiveDanmu: ((user: String, said: String) -> Unit)? = null,
+    private var receiveDanmaku: ((user: String, said: String) -> Unit)? = null,
     private var receiveGift: ((user: String, num: Int, giftName: String) -> Unit)? = null,
     private var vipEnterInLiveRoom: ((user: String) -> Unit)? = null,
     private var guardEnterInLiveRoom: ((user: String) -> Unit)? = null,
@@ -25,7 +25,7 @@ class SimpleMessageHandlerImpl(
     private var error: ((message: String, e: MessageException) -> Unit)? = null
 ) : SimpleMessageHandler {
     override fun onReceiveDanmaku(block: (user: String, said: String) -> Unit) {
-        receiveDanmu = block
+        receiveDanmaku = block
     }
 
     override fun onReceiveGift(block: (user: String, num: Int, giftName: String) -> Unit) {
@@ -63,7 +63,7 @@ class SimpleMessageHandlerImpl(
                     val info = json.jsonObject["info"]!!.jsonArray
                     val said = info[1].jsonPrimitive.content
                     val user = info[2].jsonArray[1].jsonPrimitive.content
-                    receiveDanmu?.invoke(user, said)
+                    receiveDanmaku?.invoke(user, said)
                 }
                 SEND_GIFT -> {
                     val data = json.jsonObject["data"]!!.jsonObject
