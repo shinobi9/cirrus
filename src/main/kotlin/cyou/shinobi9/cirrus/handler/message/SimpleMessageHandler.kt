@@ -60,14 +60,16 @@ class SimpleMessageHandlerImpl(
                 ?: throw Exception("unexpect json format, missing [cmd] !")
             when (searchCMD(cmd)) {
                 DANMU_MSG -> {
-                    val said = json.jsonObject["info"]!!.jsonArray[1].jsonPrimitive.content
-                    val user = json.jsonObject["info"]!!.jsonArray[2].jsonArray[1].jsonPrimitive.content
+                    val info = json.jsonObject["info"]!!.jsonArray
+                    val said = info[1].jsonPrimitive.content
+                    val user = info[2].jsonArray[1].jsonPrimitive.content
                     receiveDanmu?.invoke(user, said)
                 }
                 SEND_GIFT -> {
-                    val user = json.jsonObject["data"]!!.jsonObject["uname"]!!.jsonPrimitive.content
-                    val num = json.jsonObject["data"]!!.jsonObject["num"]!!.jsonPrimitive.int
-                    val giftName = json.jsonObject["data"]!!.jsonObject["giftName"]!!.jsonPrimitive.content
+                    val data = json.jsonObject["data"]!!.jsonObject
+                    val user = data["uname"]!!.jsonPrimitive.content
+                    val num = data["num"]!!.jsonPrimitive.int
+                    val giftName = data["giftName"]!!.jsonPrimitive.content
                     receiveGift?.invoke(user, num, giftName)
                 }
                 WELCOME -> {
