@@ -1,3 +1,5 @@
+package core
+
 import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.conf.CirrusConfig
 import java.security.Security

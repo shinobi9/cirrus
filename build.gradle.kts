@@ -17,41 +17,32 @@ repositories {
     mavenCentral()
 }
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
+val java8 = JavaVersion.VERSION_1_8.toString()
 
-// val compileTestKotlin: KotlinCompile by tasks
-// compileTestKotlin.kotlinOptions.jvmTarget = "1.8"
-
-tasks.compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
-}
-
-tasks.compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-    sourceCompatibility = "1.8"
-    targetCompatibility = "1.8"
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+        jvmTarget = java8
+        sourceCompatibility = java8
+        targetCompatibility = java8
+    }
 }
 
 dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-core:$ktor_version") {
+        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
+    }
+    implementation("io.ktor:ktor-client-cio:$ktor_version") {
+        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
+    }
     implementation("io.ktor:ktor-client-websockets:$ktor_version")
     implementation("io.ktor:ktor-client-logging-jvm:$ktor_version")
     implementation("io.ktor:ktor-client-serialization:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.8")
-
-    testImplementation("no.tornado:tornadofx:1.7.20")
-
-//    implementation("io.ktor:ktor-client-json-jvm:$ktor_version")
-//    implementation("io.ktor:ktor-client-gson:$ktor_version")
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-//    implementation("io.ktor:ktor-server-netty:$ktor_version")
-//    implementation("io.ktor:ktor-server-core:$ktor_version")
-//    implementation("io.ktor:ktor-websockets:$ktor_version")
-//    testImplementation("io.ktor:ktor-server-tests:$ktor_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-native-mt")
+    testImplementation("no.tornado:tornadofx:1.7.20") {
+        exclude("org.jetbrains.kotlin", "kotlin-reflect")
+    }
 }

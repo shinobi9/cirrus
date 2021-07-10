@@ -14,6 +14,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.lang.Exception
 import java.lang.RuntimeException
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 class JsonResolveException(message: String) : RuntimeException(message)
 
@@ -74,6 +76,7 @@ suspend fun HttpClient.loadBalanceWebsocketServer(realRoomId: Int): LoadBalanceI
 suspend inline fun WebSocketSession.sendPacket(packet: Packet) =
     send(packet.toByteBuffer().let { Frame.Binary(true, it) })
 
+@OptIn(ExperimentalTime::class)
 suspend fun HttpClient.connectToBilibiliLive(
     realRoomId: Int,
     urlString: String,
@@ -104,7 +107,7 @@ suspend fun HttpClient.connectToBilibiliLive(
                 while (true) {
                     LOG.debug { "send heart beat packet" }
                     sendPacket(Packets.heartBeat)
-                    delay(30_000)
+                    delay(Duration.seconds(30))
                 }
             } catch (e: Exception) {
                 LOG.error(e) { "exception occur in connecting!" }

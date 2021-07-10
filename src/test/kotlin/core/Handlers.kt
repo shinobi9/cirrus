@@ -1,3 +1,5 @@
+package core
+
 import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.conf.CirrusConfig
 import cyou.shinobi9.cirrus.handler.message.rawMessageHandler
@@ -6,6 +8,7 @@ import cyou.shinobi9.cirrus.handler.message.simpleMessageHandler
 fun main() {
     rawMessage()
 //    simpleMessage()
+//    core.simpleMessage()
 }
 
 fun simpleMessage() {
@@ -18,7 +21,7 @@ fun simpleMessage() {
             }
         )
     )
-    cirrus.connectToBLive(958282)
+    cirrus.connectToBLive(1314)
     Thread.sleep(100_000)
     println("ready to close")
     cirrus.close()
@@ -34,7 +37,7 @@ fun rawMessage() {
             }
         )
     )
-    cirrus.connectToBLive(958282)
+    cirrus.connectToBLive(1314)
     Thread.currentThread().join()
 //    Thread.sleep(10_000)
 //    println("ready to close")
