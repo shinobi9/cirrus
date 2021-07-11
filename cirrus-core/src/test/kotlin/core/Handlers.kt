@@ -8,7 +8,7 @@ import cyou.shinobi9.cirrus.handler.message.simpleMessageHandler
 fun main() {
     rawMessage()
 //    simpleMessage()
-//    core.simpleMessage()
+//    simpleMessage()
 }
 
 fun simpleMessage() {

@@ -12,7 +12,7 @@ import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
-val LOG = KotlinLogging.logger { }
+internal val LOG = KotlinLogging.logger { }
 
 class Cirrus(private val config: CirrusConfig = CirrusConfig()) : CoroutineScope {
     override val coroutineContext: CoroutineContext

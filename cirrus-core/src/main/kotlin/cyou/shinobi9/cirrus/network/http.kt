@@ -12,6 +12,7 @@ import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
 import java.lang.Exception
 import java.lang.RuntimeException
 import kotlin.time.Duration
@@ -28,7 +29,7 @@ data class Wrapper<T>(
 
 @Serializable
 data class RealRoom(
-    @SerialName("room_id") var realRoomId: Int?
+    @SerialName("room_id") var realRoomId: Int?,
 )
 
 @Serializable
@@ -58,10 +59,12 @@ data class Server(
 )
 
 suspend fun HttpClient.resolveRealRoomId(roomId: Int): Int {
-    val response = get<Wrapper<RealRoom>>("https://api.live.bilibili.com/room/v1/Room/room_init") {
+    val response = get<JsonElement>("https://api.live.bilibili.com/room/v1/Room/room_init") {
         parameter("id", roomId)
     }
-    return response.data?.realRoomId ?: jsonResolveError("resolve real room id error")
+    val data = response.jsonObject["data"]
+    val realRoomId = (data as? JsonObject)?.get("room_id")?.jsonPrimitive?.int
+    return realRoomId ?: jsonResolveError("resolve real room id error")
 }
 
 suspend fun HttpClient.loadBalanceWebsocketServer(realRoomId: Int): LoadBalanceInfo {
