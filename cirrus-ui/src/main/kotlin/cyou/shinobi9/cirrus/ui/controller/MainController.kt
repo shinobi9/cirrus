@@ -22,17 +22,19 @@ class MainController : Controller(), CoroutineScope {
         if (::danmakuListener.isInitialized)
             danmakuListener.cancel()
         val backend = Cirrus(
-            config = CirrusConfig(messageHandler =
-            simpleMessageHandler {
-                onReceiveDanmaku { user, said ->
-                    runBlocking {
-                        withContext(Dispatchers.JavaFx) {
-                            LOG.info { "$user : $said" }
-                            danmakuModel.observableDanmakuList.add(Danmaku(user, said))
+            config = CirrusConfig(
+                messageHandler =
+                simpleMessageHandler {
+                    onReceiveDanmaku { user, said ->
+                        runBlocking {
+                            withContext(Dispatchers.JavaFx) {
+                                LOG.info { "$user : $said" }
+                                danmakuModel.observableDanmakuList.add(Danmaku(user, said))
+                            }
                         }
                     }
                 }
-            })
+            )
         )
         danmakuListener = backend.connectToBLive(roomId)
     }

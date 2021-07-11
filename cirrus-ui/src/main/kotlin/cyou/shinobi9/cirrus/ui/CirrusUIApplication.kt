@@ -8,10 +8,9 @@ import mu.KotlinLogging
 import tornadofx.*
 import kotlin.coroutines.CoroutineContext
 
-class CirrusUIApplication: App(MainView::class, Styles::class),CoroutineScope{
+class CirrusUIApplication : App(MainView::class, Styles::class), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.JavaFx
-
 }
 
 fun main(args: Array<String>) = launch<CirrusUIApplication>(args)

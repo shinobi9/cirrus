@@ -5,7 +5,6 @@ import javafx.collections.ObservableList
 import tornadofx.ViewModel
 import tornadofx.asObservable
 import tornadofx.listProperty
-import tornadofx.toProperty
 
 data class Danmaku(
     var user: String,

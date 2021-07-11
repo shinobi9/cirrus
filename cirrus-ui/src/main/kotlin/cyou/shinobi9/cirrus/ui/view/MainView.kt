@@ -10,7 +10,6 @@ import tornadofx.*
 
 class MainView : View("cirrus-ui") {
 
-
     override val root = hbox()
     private val danmakuModel = DanmakuModel()
     private val mainController by inject<MainController>()
@@ -35,7 +34,6 @@ class MainView : View("cirrus-ui") {
                         }
                     }
                 }
-
             }
 
             listview(danmakuModel.observableDanmakuList) {
@@ -54,10 +52,6 @@ class MainView : View("cirrus-ui") {
                     )
                 }
             }
-
         }
     }
-
 }
-
-
