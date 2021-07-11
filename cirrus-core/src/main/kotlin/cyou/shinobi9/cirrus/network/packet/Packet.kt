@@ -2,27 +2,27 @@ package cyou.shinobi9.cirrus.network.packet
 
 import java.nio.ByteBuffer
 
-class Packet private constructor(header: PacketHead, payload: ByteBuffer) {
-    var header: PacketHead = header
+class Packet private constructor(packetMask: PacketMask, packetPayload: ByteBuffer) {
+    var mask: PacketMask = packetMask
         private set
-    var payload: ByteBuffer = payload
+    var payload: ByteBuffer = packetPayload
         private set
 
     companion object {
-        fun createPacket(header: PacketHead, payload: ByteBuffer): Packet {
-            return Packet(header, payload).apply { calcHeaderLength() }
+        fun createPacket(packetMask: PacketMask, packetPayload: ByteBuffer): Packet {
+            return Packet(packetMask, packetPayload).apply { calcMaskLength() }
         }
 
         fun createPacket(
-            header: PacketHead,
-            payload: ByteBuffer,
-            packLength: Int,
-            headLength: Short
+            _mask: PacketMask,
+            _payload: ByteBuffer,
+            _packLength: Int,
+            _maskLength: Short
         ): Packet {
-            return Packet(header, payload).apply {
-                with(this.header) {
-                    this.packLength = packLength
-                    this.headLength = headLength
+            return Packet(_mask, _payload).apply {
+                with(mask) {
+                    packLength = _packLength
+                    maskLength = _maskLength
                 }
             }
         }
@@ -30,37 +30,37 @@ class Packet private constructor(header: PacketHead, payload: ByteBuffer) {
         fun resolve(buffer: ByteBuffer): Packet {
             with(buffer) {
                 val packLength = int
-                val headLength = short
+                val maskLength = short
                 val version = short
                 val code = int
                 val seq = int
                 val body = ByteArray(buffer.remaining())
                 get(body)
                 return createPacket(
-                    PacketHead(
+                    PacketMask(
                         searchVersion(version, true),
                         searchOperation(code, true),
                         seq
                     ),
-                    ByteBuffer.wrap(body), packLength, headLength
+                    ByteBuffer.wrap(body), packLength, maskLength
                 )
             }
         }
     }
 
     fun toByteBuffer(): ByteBuffer {
-        return ByteBuffer.allocate(header.packLength).apply {
-            putInt(header.packLength)
-            putShort(header.headLength)
-            putShort(header.version.version)
-            putInt(header.code.code)
-            putInt(header.seq)
+        return ByteBuffer.allocate(mask.packLength).apply {
+            putInt(mask.packLength)
+            putShort(mask.maskLength)
+            putShort(mask.version.version)
+            putInt(mask.code.code)
+            putInt(mask.seq)
             put(payload)
             flip()
         }
     }
 
-    private fun calcHeaderLength() {
-        header.packLength = header.headLength + payload.limit()
+    private fun calcMaskLength() {
+        mask.packLength = mask.maskLength + payload.limit()
     }
 }

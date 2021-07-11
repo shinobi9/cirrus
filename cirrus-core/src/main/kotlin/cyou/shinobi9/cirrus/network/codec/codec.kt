@@ -22,21 +22,21 @@ fun decode(
 
 ) {
     val packet = Packet.resolve(buffer)
-    val header = packet.header
+    val mask = packet.mask
     val payload = packet.payload
-    when (header.code) {
+    when (mask.code) {
         HEARTBEAT_REPLY -> LOG.debug { "receive heart beat packet" }
         AUTH_REPLY -> {
             val message = payload.array().toString(UTF_8)
             LOG.info { "auth info response => $message" }
         }
         SEND_MSG_REPLY -> {
-            if (header.version == Version.WS_BODY_PROTOCOL_VERSION_DEFLATE) {
+            if (mask.version == Version.WS_BODY_PROTOCOL_VERSION_DEFLATE) {
                 decode(ByteBuffer.wrap(uncompressZlib(payload.array())), messageHandler, eventHandler)
                 return
             }
-            require(header.version == Version.WS_BODY_PROTOCOL_VERSION_NORMAL)
-            val byteArray = ByteArray(header.packLength - header.headLength)
+            require(mask.version == Version.WS_BODY_PROTOCOL_VERSION_NORMAL)
+            val byteArray = ByteArray(mask.packLength - mask.maskLength)
             payload.get(byteArray)
             byteArray.toString(UTF_8).let { message ->
                 LOG.debug { message }
@@ -46,9 +46,9 @@ fun decode(
                 decode(payload, messageHandler, eventHandler)
         }
         else -> {
-            val operation = searchOperation(header.code.code)
+            val operation = searchOperation(mask.code.code)
             if (operation == UNKNOWN)
-                LOG.warn { "code unknown! => ${header.code.code}" }
+                LOG.warn { "code unknown! => ${mask.code.code}" }
             else
                 LOG.warn { "code exist in dictionary , but now haven't been handle => name : ${operation.name} , code : ${operation.code} " }
         }
