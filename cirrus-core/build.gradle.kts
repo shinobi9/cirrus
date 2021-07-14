@@ -6,7 +6,7 @@ val kotlin_version: String by project
 
 plugins {
     kotlin("jvm") apply true
-    kotlin("plugin.serialization") version "1.5.20"
+    kotlin("plugin.serialization") version "1.5.21"
 }
 
 group = "cyou.shinobi9"
@@ -42,7 +42,4 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
     api("io.github.microutils:kotlin-logging-jvm:2.0.8")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-native-mt")
-    testImplementation("no.tornado:tornadofx:1.7.20") {
-        exclude("org.jetbrains.kotlin", "kotlin-reflect")
-    }
 }

@@ -16,7 +16,7 @@ repositories {
 dependencies {
     implementation(project(":cirrus-core"))
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.20")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.5.21")
     implementation("no.tornado:tornadofx:1.7.20") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
@@ -32,8 +32,6 @@ dependencies {
     implementation("org.slf4j:slf4j-api:1.7.30")
     implementation("ch.qos.logback:logback-classic:1.2.3")
 }
-
-
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
