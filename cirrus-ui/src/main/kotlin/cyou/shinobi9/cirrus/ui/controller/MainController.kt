@@ -8,7 +8,7 @@ import cyou.shinobi9.cirrus.ui.model.Danmaku
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
-import tornadofx.Controller
+import tornadofx.*
 import kotlin.coroutines.CoroutineContext
 
 class MainController : Controller(), CoroutineScope {
