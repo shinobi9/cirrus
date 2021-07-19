@@ -41,9 +41,9 @@ internal val defaultClient = HttpClient(CIO) {
 
 class Cirrus(
     private val config: CirrusConfig = CirrusConfig(),
-    private val client: HttpClient = defaultClient,
-    private val eventHandler: EventHandler = simpleEventHandler {},
-    private val messageHandler: MessageHandler = rawMessageHandler {},
+    val client: HttpClient = defaultClient,
+    val eventHandler: EventHandler? = simpleEventHandler {},
+    val messageHandler: MessageHandler? = rawMessageHandler {},
 ) : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + useDispatcher + exceptionHandler
@@ -76,6 +76,6 @@ class Cirrus(
             "wss://${server.host}:${server.wssPort}/sub"
         }
         LOG.info { "use          => $urlString" }
-        client.connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, eventHandler, messageHandler, job)
+        job.connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, this@Cirrus)
     }
 }

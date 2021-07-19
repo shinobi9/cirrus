@@ -1,8 +1,8 @@
 package cyou.shinobi9.cirrus.network
 
+import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.LOG
-import cyou.shinobi9.cirrus.handler.event.EventHandler
-import cyou.shinobi9.cirrus.handler.message.MessageHandler
+import cyou.shinobi9.cirrus.handler.event.EventType.*
 import cyou.shinobi9.cirrus.network.codec.decode
 import cyou.shinobi9.cirrus.network.packet.Packet
 import cyou.shinobi9.cirrus.network.packet.Packets
@@ -81,20 +81,38 @@ suspend fun HttpClient.loadBalanceWebsocketServer(realRoomId: Int): LoadBalanceI
 suspend inline fun WebSocketSession.sendPacket(packet: Packet) =
     send(packet.toByteBuffer().let { Frame.Binary(true, it) })
 
-@OptIn(ExperimentalTime::class)
-suspend fun HttpClient.connectToBilibiliLive(
+suspend fun CoroutineContext.connectToBilibiliLive(
     realRoomId: Int,
     urlString: String,
     token: String,
-    eventHandler: EventHandler,
-    messageHandler: MessageHandler,
-    parentContext: CoroutineContext,
+    cirrus: Cirrus
 ) {
-    wss(urlString = urlString) {
-        withContext(parentContext) {
+    try {
+        doConnect(realRoomId, urlString, token, cirrus)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+@OptIn(ExperimentalTime::class)
+suspend fun CoroutineContext.doConnect(
+    realRoomId: Int,
+    urlString: String,
+    token: String,
+    cirrus: Cirrus
+) {
+    val eventHandler = cirrus.eventHandler
+    val messageHandler = cirrus.messageHandler
+    val client = cirrus.client
+    eventHandler?.handle(CONNECT, cirrus)
+    client.wss(urlString = urlString) {
+        eventHandler?.handle(CONNECTED, cirrus)
+        withContext(this@doConnect) {
             try {
                 LOG.debug { "send auth info" }
+                eventHandler?.handle(LOGIN, cirrus)
                 sendPacket(Packets.auth(realRoomId, token))
+
                 delay(200)
                 LOG.debug { "decode message" }
                 launch {
@@ -108,6 +126,7 @@ suspend fun HttpClient.connectToBilibiliLive(
                             LOG.info { "message : $message" }
                             LOG.info { "reason  : $knownReason" }
                         }
+                        eventHandler?.handle(DISCONNECT, cirrus)
                     }
                 }
                 // send heart beat every 30s

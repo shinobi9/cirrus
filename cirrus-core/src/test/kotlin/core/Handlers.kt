@@ -13,10 +13,10 @@ fun simpleMessage() {
     val cirrus = Cirrus(
         messageHandler = simpleMessageHandler {
             onReceiveDanmaku { user, said ->
-                println("$user : $said")
+                TEST_LOG.info { "$user : $said" }
             }
             onUserEnterInLiveRoom {
-                println("$it enter in")
+                TEST_LOG.info { "$it enter in" }
             }
         }
     )

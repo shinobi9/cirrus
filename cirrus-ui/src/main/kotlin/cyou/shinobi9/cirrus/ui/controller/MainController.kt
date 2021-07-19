@@ -33,8 +33,8 @@ class MainController : Controller(), CoroutineScope {
     }
 
     private suspend fun addItemToViewModel(user: String, said: String, danmakuModel: DanmakuModel) {
+        LOG.info { "$user : $said" }
         withContext(Dispatchers.JavaFx) {
-            LOG.info { "$user : $said" }
             danmakuModel.observableDanmakuList.add(Danmaku(user, said))
         }
     }
