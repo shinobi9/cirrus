@@ -87,11 +87,7 @@ suspend fun CoroutineContext.connectToBilibiliLive(
     token: String,
     cirrus: Cirrus
 ) {
-    try {
-        doConnect(realRoomId, urlString, token, cirrus)
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
+    doConnect(realRoomId, urlString, token, cirrus)
 }
 
 @OptIn(ExperimentalTime::class)
@@ -130,10 +126,14 @@ suspend fun CoroutineContext.doConnect(
                     }
                 }
                 // send heart beat every 30s
-                while (true) {
-                    LOG.debug { "send heart beat packet" }
-                    sendPacket(Packets.heartBeat)
-                    delay(Duration.seconds(30))
+                try {
+                    while (true) {
+                        LOG.debug { "send heart beat packet" }
+                        sendPacket(Packets.heartBeat)
+                        delay(Duration.seconds(30))
+                    }
+                } catch (e: Exception) {
+                    LOG.error(e) { "exception occur when sending packet!" }
                 }
             } catch (e: Exception) {
                 LOG.error(e) { "exception occur in connecting!" }

@@ -19,8 +19,8 @@ fun main() {
             },
             eventHandler = simpleEventHandler {
                 onDisconnect {
+                    TEST_LOG.info { "ready to reconnect" }
                     runBlocking {
-                        TEST_LOG.info { "ready to reconnect" }
                         it.connectToBLive(room)
                     }
                 }

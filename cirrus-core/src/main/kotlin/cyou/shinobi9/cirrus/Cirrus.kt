@@ -25,6 +25,9 @@ internal val LOG = KotlinLogging.logger { }
 internal val defaultClient = HttpClient(CIO) {
     BrowserUserAgent()
     install(WebSockets)
+    install(HttpTimeout) {
+        connectTimeoutMillis = 5000
+    }
     install(Logging) {
         level = LogLevel.ALL
     }
@@ -76,6 +79,16 @@ class Cirrus(
             "wss://${server.host}:${server.wssPort}/sub"
         }
         LOG.info { "use          => $urlString" }
-        job.connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, this@Cirrus)
+        withReconnect { launch { job.connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, this@Cirrus) } }
+    }
+
+    private fun withReconnect(block: () -> Unit) {
+        runBlocking {
+            block()
+            while (true) {
+                if (job.isCancelled)
+                    block()
+            }
+        }
     }
 }
