@@ -1,7 +1,6 @@
 package cyou.shinobi9.cirrus.ui.controller
 
 import cyou.shinobi9.cirrus.Cirrus
-import cyou.shinobi9.cirrus.conf.CirrusConfig
 import cyou.shinobi9.cirrus.handler.message.simpleMessageHandler
 import cyou.shinobi9.cirrus.ui.LOG
 import cyou.shinobi9.cirrus.ui.model.Danmaku
@@ -22,20 +21,21 @@ class MainController : Controller(), CoroutineScope {
         if (::danmakuListener.isInitialized)
             danmakuListener.cancel()
         val backend = Cirrus(
-            config = CirrusConfig(
-                messageHandler =
-                simpleMessageHandler {
-                    onReceiveDanmaku { user, said ->
-                        runBlocking {
-                            withContext(Dispatchers.JavaFx) {
-                                LOG.info { "$user : $said" }
-                                danmakuModel.observableDanmakuList.add(Danmaku(user, said))
-                            }
-                        }
+            messageHandler = simpleMessageHandler {
+                onReceiveDanmaku { user, said ->
+                    launch {
+                        addItemToViewModel(user, said, danmakuModel)
                     }
                 }
-            )
+            }
         )
         danmakuListener = backend.connectToBLive(roomId)
+    }
+
+    private suspend fun addItemToViewModel(user: String, said: String, danmakuModel: DanmakuModel) {
+        withContext(Dispatchers.JavaFx) {
+            LOG.info { "$user : $said" }
+            danmakuModel.observableDanmakuList.add(Danmaku(user, said))
+        }
     }
 }

@@ -8,6 +8,7 @@ import java.lang.RuntimeException
 interface SimpleMessageHandler : MessageHandler {
     fun onReceiveDanmaku(block: (user: String, said: String) -> Unit)
     fun onReceiveGift(block: (user: String, num: Int, giftName: String) -> Unit)
+    fun onUserEnterInLiveRoom(block: (user: String) -> Unit)
     fun onVipEnterInLiveRoom(block: (user: String) -> Unit)
     fun onGuardEnterInLiveRoom(block: (user: String) -> Unit)
     fun onAllTypeMessage(block: (message: String) -> Unit)
@@ -18,6 +19,7 @@ interface SimpleMessageHandler : MessageHandler {
 class SimpleMessageHandlerImpl(
     private var receiveDanmaku: ((user: String, said: String) -> Unit)? = null,
     private var receiveGift: ((user: String, num: Int, giftName: String) -> Unit)? = null,
+    private var userEnterInLiveRoom: ((user: String) -> Unit)? = null,
     private var vipEnterInLiveRoom: ((user: String) -> Unit)? = null,
     private var guardEnterInLiveRoom: ((user: String) -> Unit)? = null,
     private var allTypeMessage: ((message: String) -> Unit)? = null,
@@ -30,6 +32,10 @@ class SimpleMessageHandlerImpl(
 
     override fun onReceiveGift(block: (user: String, num: Int, giftName: String) -> Unit) {
         receiveGift = block
+    }
+
+    override fun onUserEnterInLiveRoom(block: (user: String) -> Unit) {
+        userEnterInLiveRoom = block
     }
 
     override fun onVipEnterInLiveRoom(block: (user: String) -> Unit) {
@@ -79,6 +85,10 @@ class SimpleMessageHandlerImpl(
                 WELCOME_GUARD -> {
                     val user = json.jsonObject["data"]!!.jsonObject["username"]!!.jsonPrimitive.content
                     guardEnterInLiveRoom?.invoke(user)
+                }
+                INTERACT_WORD -> {
+                    val user = json.jsonObject["data"]!!.jsonObject["uname"]!!.jsonPrimitive.content
+                    userEnterInLiveRoom?.invoke(user)
                 }
                 UNKNOWN -> {
                     unknownTypeMessage?.invoke(message)

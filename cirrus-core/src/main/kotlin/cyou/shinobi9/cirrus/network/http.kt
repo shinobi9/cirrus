@@ -1,7 +1,8 @@
 package cyou.shinobi9.cirrus.network
 
-import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.LOG
+import cyou.shinobi9.cirrus.handler.event.EventHandler
+import cyou.shinobi9.cirrus.handler.message.MessageHandler
 import cyou.shinobi9.cirrus.network.codec.decode
 import cyou.shinobi9.cirrus.network.packet.Packet
 import cyou.shinobi9.cirrus.network.packet.Packets
@@ -15,6 +16,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import java.lang.Exception
 import java.lang.RuntimeException
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -84,10 +86,12 @@ suspend fun HttpClient.connectToBilibiliLive(
     realRoomId: Int,
     urlString: String,
     token: String,
-    cirrus: Cirrus
+    eventHandler: EventHandler,
+    messageHandler: MessageHandler,
+    parentContext: CoroutineContext,
 ) {
     wss(urlString = urlString) {
-        withContext(cirrus.coroutineContext) {
+        withContext(parentContext) {
             try {
                 LOG.debug { "send auth info" }
                 sendPacket(Packets.auth(realRoomId, token))
@@ -95,7 +99,7 @@ suspend fun HttpClient.connectToBilibiliLive(
                 LOG.debug { "decode message" }
                 launch {
                     for (message in incoming)
-                        decode(message.buffer, cirrus.messageHandler, cirrus.eventHandler)
+                        decode(message.buffer, messageHandler, eventHandler)
                 }
                 launch {
                     closeReason.await()?.let {

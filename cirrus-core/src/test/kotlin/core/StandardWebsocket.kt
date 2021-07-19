@@ -12,7 +12,7 @@ fun main() {
 
 fun simple() {
     val cirrus = Cirrus()
-    cirrus.connectToBLive(55)
+    cirrus.connectToBLive(readLine()!!.toInt())
     Thread.sleep(10_000)
     println("ready to close")
     cirrus.close()
@@ -20,7 +20,7 @@ fun simple() {
 
 fun useDispatcherIO() {
     val cirrus = Cirrus(CirrusConfig(useDispatchersIO = false))
-    cirrus.connectToBLive(55)
+    cirrus.connectToBLive(readLine()!!.toInt())
     Thread.sleep(35_000)
     println("ready to close")
     cirrus.close()

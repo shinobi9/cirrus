@@ -2,10 +2,19 @@ package cyou.shinobi9.cirrus
 
 import cyou.shinobi9.cirrus.conf.CirrusConfig
 import cyou.shinobi9.cirrus.handler.event.EventHandler
+import cyou.shinobi9.cirrus.handler.event.simpleEventHandler
 import cyou.shinobi9.cirrus.handler.message.MessageHandler
+import cyou.shinobi9.cirrus.handler.message.rawMessageHandler
 import cyou.shinobi9.cirrus.network.connectToBilibiliLive
 import cyou.shinobi9.cirrus.network.loadBalanceWebsocketServer
 import cyou.shinobi9.cirrus.network.resolveRealRoomId
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
+import io.ktor.client.features.websocket.*
 import kotlinx.coroutines.*
 import mu.KotlinLogging
 import java.util.concurrent.Executors
@@ -13,21 +22,39 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
 
 internal val LOG = KotlinLogging.logger { }
+internal val defaultClient = HttpClient(CIO) {
+    BrowserUserAgent()
+    install(WebSockets)
+    install(Logging) {
+        level = LogLevel.ALL
+    }
+    install(JsonFeature) {
+        serializer = KotlinxSerializer(
+            kotlinx.serialization.json.Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            }
+        )
+    }
+}
 
-class Cirrus(private val config: CirrusConfig = CirrusConfig()) : CoroutineScope {
+class Cirrus(
+    private val config: CirrusConfig = CirrusConfig(),
+    private val client: HttpClient = defaultClient,
+    private val eventHandler: EventHandler = simpleEventHandler {},
+    private val messageHandler: MessageHandler = rawMessageHandler {},
+) : CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + useDispatcher + exceptionHandler
     private val cirrusDispatcher by lazy {
         Executors.newFixedThreadPool(config.threadsCount).asCoroutineDispatcher()
     }
     private val useDispatcher = if (config.useDispatchersIO) Dispatchers.IO else cirrusDispatcher
-    private val client = config.httpClient
     private val job = SupervisorJob()
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         LOG.error(throwable) { "exception occur!" }
     }
-    val eventHandler: EventHandler = config.eventHandler
-    val messageHandler: MessageHandler = config.messageHandler
 
     /**
      * stop job which may working and shutdown internal thread pool
@@ -49,6 +76,6 @@ class Cirrus(private val config: CirrusConfig = CirrusConfig()) : CoroutineScope
             "wss://${server.host}:${server.wssPort}/sub"
         }
         LOG.info { "use          => $urlString" }
-        client.connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, this@Cirrus)
+        client.connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, eventHandler, messageHandler, job)
     }
 }
