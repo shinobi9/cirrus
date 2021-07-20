@@ -14,9 +14,6 @@ import kotlinx.coroutines.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
-import java.lang.Exception
-import java.lang.RuntimeException
-import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
@@ -81,53 +78,64 @@ suspend fun HttpClient.loadBalanceWebsocketServer(realRoomId: Int): LoadBalanceI
 suspend inline fun WebSocketSession.sendPacket(packet: Packet) =
     send(packet.toByteBuffer().let { Frame.Binary(true, it) })
 
-suspend fun CoroutineContext.connectToBilibiliLive(
+class DisconnectException(message: String, throwable: Throwable? = null) : RuntimeException(message, throwable)
+
+suspend fun Cirrus.connectToBilibiliLive(
     realRoomId: Int,
     urlString: String,
     token: String,
-    cirrus: Cirrus
+    job: CompletableJob,
 ) {
-    doConnect(realRoomId, urlString, token, cirrus)
+    while (!job.isCancelled) {
+        try {
+            doConnect(realRoomId, urlString, token, job)
+        } catch (e: Exception) {
+            LOG.error(e) { "exception occur!" }
+            LOG.info { "try reconnect..." }
+            delay(3000)
+        }
+    }
 }
 
 @OptIn(ExperimentalTime::class)
-suspend fun CoroutineContext.doConnect(
+suspend fun Cirrus.doConnect(
     realRoomId: Int,
     urlString: String,
     token: String,
-    cirrus: Cirrus
+    job: CompletableJob,
 ) {
-    val eventHandler = cirrus.eventHandler
-    val messageHandler = cirrus.messageHandler
-    val client = cirrus.client
+    val cirrus = this
     eventHandler?.handle(CONNECT, cirrus)
     client.wss(urlString = urlString) {
-        eventHandler?.handle(CONNECTED, cirrus)
-        withContext(this@doConnect) {
-            try {
-                LOG.debug { "send auth info" }
-                eventHandler?.handle(LOGIN, cirrus)
-                sendPacket(Packets.auth(realRoomId, token))
+        withContext(job) {
+            eventHandler?.handle(CONNECTED, cirrus)
+            LOG.debug { "send auth info" }
 
-                delay(200)
-                LOG.debug { "decode message" }
-                launch {
-                    for (message in incoming)
-                        decode(message.buffer, messageHandler, eventHandler)
-                }
-                launch {
-                    closeReason.await()?.let {
-                        with(it) {
-                            LOG.info { "code    : $code" }
-                            LOG.info { "message : $message" }
-                            LOG.info { "reason  : $knownReason" }
-                        }
-                        eventHandler?.handle(DISCONNECT, cirrus)
+            eventHandler?.handle(LOGIN, cirrus)
+            sendPacket(Packets.auth(realRoomId, token))
+
+            LOG.debug { "decode message" }
+            launch {
+                for (message in incoming)
+                    decode(message.buffer, messageHandler, eventHandler)
+            }
+            launch {
+                closeReason.await()?.let {
+                    cirrus.lastCloseReason = it
+                    with(it) {
+                        LOG.info { "code    : $code" }
+                        LOG.info { "message : $message" }
+                        LOG.info { "reason  : $knownReason" }
                     }
+                    eventHandler?.handle(DISCONNECT, cirrus)
+                    if (it.code.toInt() == 1006) // may not correct
+                        throw DisconnectException("disconnect from server")
                 }
-                // send heart beat every 30s
+            }
+            // send heart beat every 30s
+            launch {
                 try {
-                    while (true) {
+                    while (!job.isCancelled) {
                         LOG.debug { "send heart beat packet" }
                         sendPacket(Packets.heartBeat)
                         delay(Duration.seconds(30))
@@ -135,9 +143,7 @@ suspend fun CoroutineContext.doConnect(
                 } catch (e: Exception) {
                     LOG.error(e) { "exception occur when sending packet!" }
                 }
-            } catch (e: Exception) {
-                LOG.error(e) { "exception occur in connecting!" }
-            }
+            }.join()
         }
     }
 }

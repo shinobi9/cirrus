@@ -15,6 +15,7 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.features.websocket.*
+import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
 import mu.KotlinLogging
 import java.util.concurrent.Executors
@@ -59,6 +60,10 @@ class Cirrus(
         LOG.error(throwable) { "exception occur!" }
     }
 
+    private var lastRoomId: Int? = null
+    private var lastRealRoomId: Int? = null
+    var lastCloseReason: CloseReason? = null
+
     /**
      * stop job which may working and shutdown internal thread pool
      */
@@ -71,24 +76,16 @@ class Cirrus(
 
     @Suppress("LocalVariableName")
     fun connectToBLive(roomId: Int? = null, realRoomId: Int? = null) = launch {
+        roomId?.let { lastRoomId = it }
         val _realRoomId = realRoomId ?: client.resolveRealRoomId(roomId ?: error("room id can't be null"))
+        lastRealRoomId = _realRoomId
         LOG.info { "real room id => $_realRoomId" }
         val loadBalanceInfo = client.loadBalanceWebsocketServer(_realRoomId)
         val urlString = with(loadBalanceInfo) {
             val server = hostServerList[Random.nextInt(3)]
             "wss://${server.host}:${server.wssPort}/sub"
         }
-        LOG.info { "use          => $urlString" }
-        withReconnect { launch { job.connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, this@Cirrus) } }
-    }
-
-    private fun withReconnect(block: () -> Unit) {
-        runBlocking {
-            block()
-            while (true) {
-                if (job.isCancelled)
-                    block()
-            }
-        }
+        LOG.info { "use server   => $urlString" }
+        connectToBilibiliLive(_realRoomId, urlString, loadBalanceInfo.token, job)
     }
 }

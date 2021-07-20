@@ -9,6 +9,6 @@
     </root>
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
-    <logger name="cyou.shinobi9.cirrus" level="INFO"/>
+    <logger name="cyou.shinobi9.cirrus" level="DEBUG"/>
     <logger name="io.ktor.client.HttpClient" level="WARN"/>
 </configuration>
