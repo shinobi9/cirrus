@@ -135,7 +135,7 @@ suspend fun Cirrus.doConnect(
             // send heart beat every 30s
             launch {
                 try {
-                    while (!job.isCancelled) {
+                    while (job.isActive) {
                         LOG.debug { "send heart beat packet" }
                         sendPacket(Packets.heartBeat)
                         delay(Duration.seconds(30))
