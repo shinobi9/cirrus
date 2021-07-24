@@ -36,7 +36,7 @@ class MainView : View("cirrus-ui") {
                 }
             }
 
-            listview(danmakuModel.observableDanmakuList) {
+            listview(danmakuModel.danmakusProperty) {
                 setCellFactory {
                     TextFieldListCell(
                         object : StringConverter<Danmaku>() {
