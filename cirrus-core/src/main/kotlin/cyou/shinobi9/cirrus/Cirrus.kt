@@ -9,39 +9,11 @@ import cyou.shinobi9.cirrus.network.connectToBilibiliLive
 import cyou.shinobi9.cirrus.network.loadBalanceWebsocketServer
 import cyou.shinobi9.cirrus.network.resolveRealRoomId
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.logging.*
-import io.ktor.client.features.websocket.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
-import mu.KotlinLogging
 import java.util.concurrent.Executors
 import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
-
-internal val LOG = KotlinLogging.logger { }
-internal val defaultClient = HttpClient(CIO) {
-    BrowserUserAgent()
-    install(WebSockets)
-    install(HttpTimeout) {
-        connectTimeoutMillis = 5000
-    }
-    install(Logging) {
-        level = LogLevel.ALL
-    }
-    install(JsonFeature) {
-        serializer = KotlinxSerializer(
-            kotlinx.serialization.json.Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            }
-        )
-    }
-}
 
 class Cirrus(
     private val config: CirrusConfig = CirrusConfig(),
