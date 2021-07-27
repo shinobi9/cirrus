@@ -1,9 +1,12 @@
 package cyou.shinobi9.cirrus.handler.message
 
+import cyou.shinobi9.cirrus.json
 import cyou.shinobi9.cirrus.network.packet.CMD.*
 import cyou.shinobi9.cirrus.network.packet.searchCMD
-import kotlinx.serialization.json.*
-import java.lang.RuntimeException
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 interface SimpleMessageHandler : MessageHandler {
     fun onReceiveDanmaku(block: (user: String, said: String) -> Unit)
@@ -61,33 +64,33 @@ class SimpleMessageHandlerImpl(
     override fun handle(message: String) {
         try {
             allTypeMessage?.invoke(message)
-            val json = Json.parseToJsonElement(message)
-            val cmd = json.jsonObject["cmd"]?.jsonPrimitive?.content
+            val root = json.parseToJsonElement(message)
+            val cmd = root.jsonObject["cmd"]?.jsonPrimitive?.content
                 ?: throw Exception("unexpect json format, missing [cmd] !")
             when (searchCMD(cmd)) {
                 DANMU_MSG -> {
-                    val info = json.jsonObject["info"]!!.jsonArray
+                    val info = root.jsonObject["info"]!!.jsonArray
                     val said = info[1].jsonPrimitive.content
                     val user = info[2].jsonArray[1].jsonPrimitive.content
                     receiveDanmaku?.invoke(user, said)
                 }
                 SEND_GIFT -> {
-                    val data = json.jsonObject["data"]!!.jsonObject
+                    val data = root.jsonObject["data"]!!.jsonObject
                     val user = data["uname"]!!.jsonPrimitive.content
                     val num = data["num"]!!.jsonPrimitive.int
                     val giftName = data["giftName"]!!.jsonPrimitive.content
                     receiveGift?.invoke(user, num, giftName)
                 }
                 WELCOME -> {
-                    val user = json.jsonObject["data"]!!.jsonObject["uname"]!!.jsonPrimitive.content
+                    val user = root.jsonObject["data"]!!.jsonObject["uname"]!!.jsonPrimitive.content
                     vipEnterInLiveRoom?.invoke(user)
                 }
                 WELCOME_GUARD -> {
-                    val user = json.jsonObject["data"]!!.jsonObject["username"]!!.jsonPrimitive.content
+                    val user = root.jsonObject["data"]!!.jsonObject["username"]!!.jsonPrimitive.content
                     guardEnterInLiveRoom?.invoke(user)
                 }
                 INTERACT_WORD -> {
-                    val user = json.jsonObject["data"]!!.jsonObject["uname"]!!.jsonPrimitive.content
+                    val user = root.jsonObject["data"]!!.jsonObject["uname"]!!.jsonPrimitive.content
                     userEnterInLiveRoom?.invoke(user)
                 }
                 UNKNOWN -> {

@@ -1,7 +1,7 @@
 package cyou.shinobi9.cirrus.network.packet
 
+import cyou.shinobi9.cirrus.json
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.nio.ByteBuffer
 
 object Packets {
@@ -19,7 +19,7 @@ object Packets {
             Operation.AUTH
         ),
         ByteBuffer.wrap(
-            Json.encodeToString(AuthInfo(roomId = roomId, key = token)).toByteArray()
+            json.encodeToString(AuthInfo(roomId = roomId, key = token)).toByteArray()
         )
     )
 }
