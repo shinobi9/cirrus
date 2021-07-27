@@ -12,7 +12,7 @@ import mu.KotlinLogging
 
 internal val LOG = KotlinLogging.logger { }
 internal val json = Json {
-    prettyPrint = true
+//    prettyPrint = true
     isLenient = true
     ignoreUnknownKeys = true
 }
