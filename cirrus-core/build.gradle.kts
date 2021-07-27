@@ -38,8 +38,11 @@ dependencies {
     api("io.ktor:ktor-client-websockets:$ktor_version")
     api("io.ktor:ktor-client-logging-jvm:$ktor_version")
     api("io.ktor:ktor-client-serialization:$ktor_version")
+
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-    api("io.github.microutils:kotlin-logging-jvm:2.0.8")
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0-native-mt")
+
+    api("io.github.microutils:kotlin-logging-jvm:2.0.8")
+
     testImplementation("ch.qos.logback:logback-classic:$logback_version")
 }
