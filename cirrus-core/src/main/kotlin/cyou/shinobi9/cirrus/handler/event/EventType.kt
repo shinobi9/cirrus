@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package cyou.shinobi9.cirrus.handler.event
 
 enum class EventType(val desc: String) {

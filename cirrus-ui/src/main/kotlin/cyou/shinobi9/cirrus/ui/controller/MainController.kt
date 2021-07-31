@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package cyou.shinobi9.cirrus.ui.controller
 
 import cyou.shinobi9.cirrus.Cirrus
@@ -7,7 +9,7 @@ import cyou.shinobi9.cirrus.ui.model.Danmaku
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
-import tornadofx.*
+import tornadofx.Controller
 import kotlin.coroutines.CoroutineContext
 
 class MainController : Controller(), CoroutineScope {

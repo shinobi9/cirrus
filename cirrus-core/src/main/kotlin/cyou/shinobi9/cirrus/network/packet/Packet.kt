@@ -13,6 +13,7 @@ class Packet private constructor(packetMask: PacketMask, packetPayload: ByteBuff
             return Packet(packetMask, packetPayload).apply { calcMaskLength() }
         }
 
+        @Suppress("MemberVisibilityCanBePrivate")
         fun createPacket(
             _mask: PacketMask,
             _payload: ByteBuffer,

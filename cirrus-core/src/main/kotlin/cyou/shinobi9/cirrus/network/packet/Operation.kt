@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package cyou.shinobi9.cirrus.network.packet
 
 enum class Operation(val code: Int) {

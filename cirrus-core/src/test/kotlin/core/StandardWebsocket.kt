@@ -10,6 +10,7 @@ fun main() {
     useDispatcherIO()
 }
 
+@Suppress("unused")
 fun simple() {
     val cirrus = Cirrus()
     cirrus.connectToBLive(readLine()!!.toInt())

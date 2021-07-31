@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package cyou.shinobi9.cirrus.network.packet
 
 enum class CMD(val desc: String) {
@@ -30,7 +32,7 @@ enum class CMD(val desc: String) {
     LOL_ACTIVITY(""),
     LUCK_GIFT_AWARD_USER(""),
     MESSAGEBOX_USER_GAIN_MEDAL(""),
-    new_anchor_reward(""),
+    NEW_ANCHOR_REWARD(""),
     NOTICE_MSG(""),
     PK_AGAIN(""),
     PK_END(""),
@@ -46,7 +48,7 @@ enum class CMD(val desc: String) {
     REFRESH(""),
     ROOM_ADMINS("管理员变更"),
     ROOM_REAL_TIME_MESSAGE_UPDATE("房间时间更新"),
-    room_admin_entrance(""),
+    ROOM_ADMIN_ENTRANCE(""),
     ROOM_BLOCK_INTO(""),
     ROOM_BLOCK_MSG("房间封禁消息"),
     ROOM_BOX_MASTER(""),
