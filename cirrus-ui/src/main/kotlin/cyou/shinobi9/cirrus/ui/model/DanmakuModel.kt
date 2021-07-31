@@ -1,18 +1,12 @@
-@file:Suppress("unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused",
-    "unused"
-)
+@file:Suppress("unused")
 
 package cyou.shinobi9.cirrus.ui.model
 
 import javafx.beans.property.ListProperty
 import javafx.collections.ObservableList
-import tornadofx.*
+import tornadofx.ViewModel
+import tornadofx.asObservable
+import tornadofx.listProperty
 
 data class Danmaku(
     var user: String,
