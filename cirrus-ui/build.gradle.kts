@@ -1,4 +1,5 @@
 @file:Suppress("PropertyName")
+
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -42,9 +43,23 @@ tasks.withType<Jar> {
     manifest {
         attributes(
             mapOf(
-                "Class-Path" to configurations.compileClasspath.get().joinToString(" ") { it.name },
                 "Main-Class" to application.mainClass.get()
             )
         )
+    }
+}
+
+tasks.register<Jar>("uber") {
+    archiveClassifier.set("uber")
+    from(sourceSets.main.get().output)
+    dependsOn(configurations.runtimeClasspath)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    }) {
+        exclude("META-INF/MANIFEST.MF")
+        exclude("META-INF/LICENSE")
+        exclude("module-info.class")
+        exclude("META-INF/NOTICE")
+        exclude("META-INF/versions/9/module-info.class")
     }
 }
