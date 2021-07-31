@@ -1,3 +1,4 @@
+@file:Suppress("PropertyName")
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logback_version: String by project
@@ -29,20 +30,12 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    api("io.ktor:ktor-client-core:$ktor_version") {
-//        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
-    }
-    api("io.ktor:ktor-client-cio:$ktor_version") {
-//        exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
-    }
+    api("io.ktor:ktor-client-core:$ktor_version")
+    api("io.ktor:ktor-client-cio:$ktor_version")
     api("io.ktor:ktor-client-websockets:$ktor_version")
     api("io.ktor:ktor-client-logging-jvm:$ktor_version")
     api("io.ktor:ktor-client-serialization:$ktor_version")
-
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-//    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1-native-mt")
-
     api("io.github.microutils:kotlin-logging-jvm:2.0.10")
-
     testImplementation("ch.qos.logback:logback-classic:$logback_version")
 }
