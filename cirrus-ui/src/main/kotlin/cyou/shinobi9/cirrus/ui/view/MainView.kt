@@ -33,6 +33,11 @@ class MainView : View("cirrus-ui") {
 //                    model.danmakusProperty.add(Danmaku("shinobi", "you died"))
                         }
                     }
+                    button("stop") {
+                        setOnMouseClicked {
+                            mainController.stop()
+                        }
+                    }
                 }
             }
 

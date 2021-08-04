@@ -1,6 +1,7 @@
 package cyou.shinobi9.cirrus.conf
 
 data class CirrusConfig(
-    val threadsCount: Int = 10,
-    val useDispatchersIO: Boolean = false,
+    var threadsCount: Int = 10,
+    var useDispatchersIO: Boolean = false,
+    var reconnect: Boolean = true,
 )

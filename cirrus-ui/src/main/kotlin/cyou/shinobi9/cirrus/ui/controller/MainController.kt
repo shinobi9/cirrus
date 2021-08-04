@@ -7,37 +7,43 @@ import cyou.shinobi9.cirrus.handler.message.simpleMessageHandler
 import cyou.shinobi9.cirrus.ui.LOG
 import cyou.shinobi9.cirrus.ui.model.Danmaku
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import tornadofx.Controller
 import kotlin.coroutines.CoroutineContext
 
 class MainController : Controller(), CoroutineScope {
-    private val job: Job = SupervisorJob()
     override val coroutineContext: CoroutineContext
-        get() = Dispatchers.IO + job
-
-    lateinit var danmakuListener: Job
+        get() = Dispatchers.JavaFx
+    private val backend = Cirrus()
 
     fun connectToBLive(roomId: Int, danmakuModel: DanmakuModel) {
-        if (::danmakuListener.isInitialized)
-            danmakuListener.cancel()
-        val backend = Cirrus(
-            messageHandler = simpleMessageHandler {
-                onReceiveDanmaku { user, said ->
-                    launch {
-                        addItemToViewModel(user, said, danmakuModel)
-                    }
-                }
+        backend.messageHandler = simpleMessageHandler {
+            onReceiveDanmaku { user, said ->
+                addItemToViewModel(user, said, danmakuModel)
             }
-        )
-        danmakuListener = backend.connectToBLive(roomId)
+        }
+
+        if (backend.runningJob()) {
+            backend.stop()
+        }
+
+        backend.connectToBLive(roomId)
     }
 
-    private suspend fun addItemToViewModel(user: String, said: String, danmakuModel: DanmakuModel) {
-        LOG.info { "$user : $said" }
-        withContext(Dispatchers.JavaFx) {
-            danmakuModel.observableDanmakuList.add(Danmaku(user, said))
+    private fun addItemToViewModel(user: String, said: String, danmakuModel: DanmakuModel) {
+        launch {
+            LOG.info { "$user : $said" }
+            withContext(Dispatchers.JavaFx) {
+                danmakuModel.observableDanmakuList.add(Danmaku(user, said))
+            }
         }
+    }
+
+    fun stop() {
+        backend.stop()
     }
 }
