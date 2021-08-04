@@ -1,62 +1,64 @@
 package cyou.shinobi9.cirrus.ui.view
 
 import cyou.shinobi9.cirrus.ui.controller.MainController
-import cyou.shinobi9.cirrus.ui.model.Danmaku
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
-import cyou.shinobi9.cirrus.ui.model.RoomModel
-import javafx.scene.control.cell.TextFieldListCell
-import javafx.util.StringConverter
+import javafx.scene.layout.BackgroundRepeat
+import javafx.scene.layout.VBox
+import javafx.scene.paint.Color
+import javafx.stage.Stage
 import tornadofx.*
 
 class MainView : View("cirrus-ui") {
-
-    override val root = hbox()
-    private val danmakuModel = DanmakuModel()
+    override val root = borderpane()
     private val mainController by inject<MainController>()
-    private val roomModel = RoomModel()
+    private val danmakuModel = DanmakuModel()
+    private var xOffset = 0.0
+    private var yOffset = 0.0
+    lateinit var danmakuVbox: VBox
 
     init {
         with(root) {
             style {
-                padding = box(10.px)
+//                backgroundColor += Color.TRANSPARENT
+                backgroundColor += Color.web("#000000", 0.2)
+                backgroundRepeat += BackgroundRepeat.NO_REPEAT to BackgroundRepeat.NO_REPEAT
+                prefWidth = 600.px
+                prefHeight = 400.px
             }
-            form {
+            center {
                 vbox {
-                    style {
-                        spacing = 10.px
+                    bindChildren(danmakuModel.danmakusProperty) {
+                        label("${it.user} : ${it.said}")
                     }
-                    label("type room id")
-                    textfield(roomModel.room.roomIdProp)
-                    button("connect") {
-                        setOnMouseClicked {
-                            mainController.connectToBLive(roomModel.roomId, danmakuModel)
-//                    model.danmakusProperty.add(Danmaku("shinobi", "you died"))
+                }
+            }
+            right {
+                vbox {
+                    button("start") {
+                        setOnAction {
+                            mainController.connect(danmakuModel)
                         }
                     }
-                    button("stop") {
-                        setOnMouseClicked {
-                            mainController.stop()
+                    button("exit") {
+                        setOnAction {
+                            (scene.window as Stage).close()
                         }
                     }
                 }
             }
 
-            listview(danmakuModel.danmakusProperty) {
-                setCellFactory {
-                    TextFieldListCell(
-                        object : StringConverter<Danmaku>() {
-                            override fun toString(danmaku: Danmaku?): String = danmaku?.let {
-                                "${danmaku.user} : ${danmaku.said}"
-                            } ?: "null"
-
-                            override fun fromString(string: String?): Danmaku? = string?.let {
-                                val split = it.split(" : ")
-                                Danmaku(split[0], split[1])
-                            }
-                        }
-                    )
-                }
+            setOnMousePressed { event ->
+                xOffset = event.sceneX
+                yOffset = event.sceneY
+            }
+            setOnMouseDragged { event ->
+                currentStage?.x = event.screenX - xOffset
+                currentStage?.y = event.screenY - yOffset
             }
         }
+    }
+
+    override fun onDock() {
+        currentStage?.scene?.fill = null
     }
 }
