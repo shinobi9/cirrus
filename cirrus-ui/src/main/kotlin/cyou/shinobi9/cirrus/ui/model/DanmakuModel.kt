@@ -4,9 +4,17 @@ package cyou.shinobi9.cirrus.ui.model
 
 import javafx.beans.property.ListProperty
 import javafx.collections.ObservableList
-import tornadofx.ViewModel
-import tornadofx.asObservable
-import tornadofx.listProperty
+import tornadofx.*
+
+data class DebugDanmaku(
+    var user: String,
+    var said: String
+)
+
+class DebugDanmakuModel(val observableDebugDanmakuList: ObservableList<DebugDanmaku> = mutableListOf<DebugDanmaku>().asObservable()) :
+    ViewModel() {
+    val danmakusProperty: ListProperty<DebugDanmaku> = listProperty(observableDebugDanmakuList)
+}
 
 data class Danmaku(
     var user: String,

@@ -1,8 +1,8 @@
 package cyou.shinobi9.cirrus.ui.view
 
 import cyou.shinobi9.cirrus.ui.controller.DebugController
-import cyou.shinobi9.cirrus.ui.model.Danmaku
-import cyou.shinobi9.cirrus.ui.model.DanmakuModel
+import cyou.shinobi9.cirrus.ui.model.DebugDanmaku
+import cyou.shinobi9.cirrus.ui.model.DebugDanmakuModel
 import cyou.shinobi9.cirrus.ui.model.RoomModel
 import javafx.scene.control.cell.TextFieldListCell
 import javafx.util.StringConverter
@@ -11,7 +11,7 @@ import tornadofx.*
 class DebugView : View("cirrus-ui-debug") {
 
     override val root = hbox()
-    private val danmakuModel = DanmakuModel()
+    private val debugDanmakuModel = DebugDanmakuModel()
     private val debugController by inject<DebugController>()
     private val roomModel = RoomModel()
 
@@ -29,7 +29,7 @@ class DebugView : View("cirrus-ui-debug") {
                     textfield(roomModel.room.roomIdProp)
                     button("connect") {
                         setOnAction {
-                            debugController.connectToBLive(roomModel.roomId, danmakuModel)
+                            debugController.connectToBLive(roomModel.roomId, debugDanmakuModel)
 //                    model.danmakusProperty.add(Danmaku("shinobi", "you died"))
                         }
                     }
@@ -41,17 +41,17 @@ class DebugView : View("cirrus-ui-debug") {
                 }
             }
 
-            listview(danmakuModel.danmakusProperty) {
+            listview(debugDanmakuModel.danmakusProperty) {
                 setCellFactory {
                     TextFieldListCell(
-                        object : StringConverter<Danmaku>() {
-                            override fun toString(danmaku: Danmaku?): String = danmaku?.let {
+                        object : StringConverter<DebugDanmaku>() {
+                            override fun toString(danmaku: DebugDanmaku?): String = danmaku?.let {
                                 "${danmaku.user} : ${danmaku.said}"
                             } ?: "null"
 
-                            override fun fromString(string: String?): Danmaku? = string?.let {
+                            override fun fromString(string: String?): DebugDanmaku? = string?.let {
                                 val split = it.split(" : ")
-                                Danmaku(split[0], split[1])
+                                DebugDanmaku(split[0], split[1])
                             }
                         }
                     )

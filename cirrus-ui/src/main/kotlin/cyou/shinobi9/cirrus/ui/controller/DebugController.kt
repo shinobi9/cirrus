@@ -5,13 +5,11 @@ package cyou.shinobi9.cirrus.ui.controller
 import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.handler.message.simpleMessageHandler
 import cyou.shinobi9.cirrus.ui.LOG
-import cyou.shinobi9.cirrus.ui.model.Danmaku
+import cyou.shinobi9.cirrus.ui.model.DebugDanmaku
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import cyou.shinobi9.cirrus.ui.model.DebugDanmakuModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import tornadofx.Controller
 import kotlin.coroutines.CoroutineContext
 
@@ -20,7 +18,7 @@ class DebugController : Controller(), CoroutineScope {
         get() = Dispatchers.JavaFx
     private val backend = Cirrus()
 
-    fun connectToBLive(roomId: Int, danmakuModel: DanmakuModel) {
+    fun connectToBLive(roomId: Int, danmakuModel: DebugDanmakuModel) {
         backend.messageHandler = simpleMessageHandler {
             onReceiveDanmaku { user, said ->
                 addItemToViewModel(user, said, danmakuModel)
@@ -34,11 +32,11 @@ class DebugController : Controller(), CoroutineScope {
         backend.connectToBLive(roomId)
     }
 
-    private fun addItemToViewModel(user: String, said: String, danmakuModel: DanmakuModel) {
+    private fun addItemToViewModel(user: String, said: String, danmakuModel: DebugDanmakuModel) {
         launch {
             LOG.info { "$user : $said" }
-            withContext(Dispatchers.JavaFx) {
-                danmakuModel.observableDanmakuList.add(Danmaku(user, said))
+            withContext(currentCoroutineContext()) {
+                danmakuModel.observableDebugDanmakuList.add(DebugDanmaku(user, said))
             }
         }
     }

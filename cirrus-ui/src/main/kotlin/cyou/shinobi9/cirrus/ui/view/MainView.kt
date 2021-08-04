@@ -2,9 +2,11 @@ package cyou.shinobi9.cirrus.ui.view
 
 import cyou.shinobi9.cirrus.ui.controller.MainController
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
+import javafx.geometry.Pos
 import javafx.scene.layout.BackgroundRepeat
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import javafx.scene.paint.Paint
 import javafx.stage.Stage
 import tornadofx.*
 
@@ -14,7 +16,6 @@ class MainView : View("cirrus-ui") {
     private val danmakuModel = DanmakuModel()
     private var xOffset = 0.0
     private var yOffset = 0.0
-    lateinit var danmakuVbox: VBox
 
     init {
         with(root) {
@@ -27,8 +28,13 @@ class MainView : View("cirrus-ui") {
             }
             center {
                 vbox {
+                    style {
+                        alignment = Pos.BOTTOM_LEFT
+                    }
                     bindChildren(danmakuModel.danmakusProperty) {
-                        label("${it.user} : ${it.said}")
+                        label("${it.user} : ${it.said}"){
+                            textFill = Paint.valueOf("white")
+                        }
                     }
                 }
             }
