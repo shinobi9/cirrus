@@ -26,6 +26,7 @@ data class Wrapper<T>(
     var data: T?
 )
 
+@Suppress("unused")
 @Serializable
 data class RealRoom(
     @SerialName("room_id") var realRoomId: Int?,
