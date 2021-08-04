@@ -47,7 +47,7 @@ class MainController : Controller(), CoroutineScope {
         }
     }
 
-    fun ObservableList<Danmaku>.queueAdd(danmaku: Danmaku) {
+    private fun ObservableList<Danmaku>.queueAdd(danmaku: Danmaku) {
         if (size > 10) {
             removeAt(0)
         }
