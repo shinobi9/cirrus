@@ -43,7 +43,7 @@ class MainController : Controller(), CoroutineScope {
     private fun handle(container: ObservableList<Danmaku>, user: String, content: String, id: Int? = null) {
         launch {
             withContext(currentCoroutineContext()) {
-                container.queueAdd(Danmaku(user, content))
+                container.queueAdd(Danmaku(id ?: 0, user, content))
             }
         }
     }

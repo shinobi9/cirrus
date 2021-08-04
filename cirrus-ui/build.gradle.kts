@@ -56,10 +56,10 @@ tasks.register<Jar>("uber") {
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     }) {
-        exclude("META-INF/MANIFEST.MF")
-        exclude("META-INF/LICENSE")
-        exclude("module-info.class")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/versions/9/module-info.class")
-    }
+    exclude("META-INF/MANIFEST.MF")
+    exclude("META-INF/LICENSE")
+    exclude("module-info.class")
+    exclude("META-INF/NOTICE")
+    exclude("META-INF/versions/9/module-info.class")
+}
 }

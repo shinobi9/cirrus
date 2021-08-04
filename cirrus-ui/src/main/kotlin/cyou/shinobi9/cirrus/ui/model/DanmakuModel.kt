@@ -17,6 +17,7 @@ class DebugDanmakuModel(val observableDebugDanmakuList: ObservableList<DebugDanm
 }
 
 data class Danmaku(
+    var id: Int,
     var user: String,
     var said: String
 )

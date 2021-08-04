@@ -4,7 +4,6 @@ import cyou.shinobi9.cirrus.ui.controller.MainController
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
 import javafx.geometry.Pos
 import javafx.scene.layout.BackgroundRepeat
-import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.stage.Stage
@@ -32,7 +31,7 @@ class MainView : View("cirrus-ui") {
                         alignment = Pos.BOTTOM_LEFT
                     }
                     bindChildren(danmakuModel.danmakusProperty) {
-                        label("${it.user} : ${it.said}"){
+                        label("${it.user} : ${it.said}") {
                             textFill = Paint.valueOf("white")
                         }
                     }

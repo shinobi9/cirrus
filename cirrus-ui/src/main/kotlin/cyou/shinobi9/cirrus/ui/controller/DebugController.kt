@@ -6,7 +6,6 @@ import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.handler.message.simpleMessageHandler
 import cyou.shinobi9.cirrus.ui.LOG
 import cyou.shinobi9.cirrus.ui.model.DebugDanmaku
-import cyou.shinobi9.cirrus.ui.model.DanmakuModel
 import cyou.shinobi9.cirrus.ui.model.DebugDanmakuModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.javafx.JavaFx
