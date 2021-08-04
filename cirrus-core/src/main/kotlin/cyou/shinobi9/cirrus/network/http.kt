@@ -76,8 +76,7 @@ suspend fun HttpClient.loadBalanceWebsocketServer(realRoomId: Int): LoadBalanceI
     return response.data ?: jsonResolveError("resolve load balance info error")
 }
 
-suspend inline fun WebSocketSession.sendPacket(packet: Packet) =
-    send(packet.toByteBuffer().let { Frame.Binary(true, it) })
+suspend inline fun WebSocketSession.sendPacket(packet: Packet) = send(packet.toByteBuffer().let { Frame.Binary(true, it) })
 
 class DisconnectException(message: String, throwable: Throwable? = null) : RuntimeException(message, throwable)
 

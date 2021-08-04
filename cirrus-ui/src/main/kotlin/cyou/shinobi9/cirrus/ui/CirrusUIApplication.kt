@@ -3,7 +3,6 @@ package cyou.shinobi9.cirrus.ui
 import cyou.shinobi9.cirrus.ui.view.MainView
 import javafx.event.EventHandler
 import javafx.stage.Stage
-import javafx.stage.WindowEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
