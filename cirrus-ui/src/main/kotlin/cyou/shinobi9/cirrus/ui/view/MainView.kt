@@ -31,14 +31,19 @@ class MainView : View("cirrus-ui") {
                         alignment = Pos.BOTTOM_LEFT
                     }
                     bindChildren(danmakuModel.danmakusProperty) {
-                        label("${it.user} : ${it.said}") {
-                            textFill = Paint.valueOf("white")
+                        hbox {
+                            label("${it.id}  ${it.user} : ${it.said}") {
+                                textFill = Paint.valueOf("white")
+                            }
                         }
                     }
                 }
             }
             right {
                 vbox {
+                    style {
+                        prefWidth = 50.px
+                    }
                     button("start") {
                         setOnAction {
                             mainController.connect(danmakuModel)

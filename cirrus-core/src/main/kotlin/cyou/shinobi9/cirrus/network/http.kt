@@ -49,12 +49,21 @@ data class Server(
     val port: Int
 )
 
+suspend fun HttpClient.userAvatar(uid: Int): String {
+    val response = get<JsonElement>("https://api.bilibili.com/x/space/acc/info") {
+        parameter("mid", uid)
+    }
+    val data = response.jsonObject["data"]?.jsonObject
+    val face = data?.get("face")?.jsonPrimitive?.content
+    return  face ?: jsonResolveError("resolve avatar error")
+}
+
 suspend fun HttpClient.resolveRealRoomId(roomId: Int): Int {
     val response = get<JsonElement>("https://api.live.bilibili.com/room/v1/Room/room_init") {
         parameter("id", roomId)
     }
-    val data = response.jsonObject["data"]
-    val realRoomId = (data as? JsonObject)?.get("room_id")?.jsonPrimitive?.int
+    val data = response.jsonObject["data"]?.jsonObject
+    val realRoomId = data?.get("room_id")?.jsonPrimitive?.int
     return realRoomId ?: jsonResolveError("resolve real room id error")
 }
 
