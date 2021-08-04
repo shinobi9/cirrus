@@ -19,9 +19,10 @@ class MainController : Controller(), CoroutineScope {
 
     fun connect(danmakuModel: DanmakuModel) {
         backend.messageHandler = configureHandler(danmakuModel)
-        launch {
-            backend.connectToBLive(92613)
+        if (backend.runningJob()) {
+            backend.stopAll()
         }
+        backend.connectToBLive(92613)
     }
 
     private fun configureHandler(danmakuModel: DanmakuModel): SimpleMessageHandlerImpl {
