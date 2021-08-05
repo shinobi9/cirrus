@@ -1,4 +1,4 @@
-# bilibili danmaku lib
+# bilibili danmaku lib & ui
 
 ### TODO
 - support proxy
