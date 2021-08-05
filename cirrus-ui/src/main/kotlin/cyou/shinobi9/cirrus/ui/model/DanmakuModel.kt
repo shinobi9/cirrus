@@ -2,8 +2,11 @@
 
 package cyou.shinobi9.cirrus.ui.model
 
+import cyou.shinobi9.cirrus.network.packet.CMD
+import cyou.shinobi9.cirrus.ui.cache.CacheManager
 import javafx.beans.property.ListProperty
 import javafx.collections.ObservableList
+import javafx.scene.image.Image
 import tornadofx.*
 
 data class DebugDanmaku(
@@ -17,12 +20,28 @@ class DebugDanmakuModel(val observableDebugDanmakuList: ObservableList<DebugDanm
 }
 
 data class Danmaku(
-    var id: Int,
-    var user: String,
-    var said: String
+    val id: Int,
+    val user: String,
+    val content: Any?,
+    val type: CMD,
+    val extra: MutableMap<String, Any?> = mutableMapOf(),
 )
 
-class DanmakuModel(val observableDanmakuList: ObservableList<Danmaku> = mutableListOf<Danmaku>().asObservable()) :
-    ViewModel() {
-    val danmakusProperty: ListProperty<Danmaku> = listProperty(observableDanmakuList)
+class DanmakuModel(
+    val danmaku: Danmaku,
+) :
+    ItemViewModel<Danmaku>() {
+    val imageProp = nonNullObjectBinding(danmaku.id) {
+        Image(cacheManager.resolveAvatar(this), 50.0, 50.0, false, false)
+    }
+
+    companion object {
+        val cacheManager: CacheManager = CacheManager()
+    }
+}
+
+class DanmakuListModel(
+    val observableDanmakuList: ObservableList<DanmakuModel> = mutableListOf<DanmakuModel>().asObservable(),
+) : ViewModel() {
+    val danmakusProperty: ListProperty<DanmakuModel> = listProperty(observableDanmakuList)
 }

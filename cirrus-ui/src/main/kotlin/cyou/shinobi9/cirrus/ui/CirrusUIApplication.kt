@@ -2,6 +2,13 @@ package cyou.shinobi9.cirrus.ui
 
 import cyou.shinobi9.cirrus.ui.view.DebugView
 import cyou.shinobi9.cirrus.ui.view.MainView
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.features.logging.*
+import io.ktor.client.features.websocket.*
 import javafx.event.EventHandler
 import javafx.stage.Stage
 import javafx.stage.StageStyle
@@ -9,6 +16,7 @@ import javafx.stage.WindowEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import tornadofx.App
 import tornadofx.launch
@@ -51,3 +59,21 @@ fun main(args: Array<String>) {
 }
 
 internal val LOG = KotlinLogging.logger {}
+
+internal val json = Json {
+    isLenient = true
+    ignoreUnknownKeys = true
+}
+internal val defaultClient = HttpClient(CIO) {
+    BrowserUserAgent()
+    install(WebSockets)
+    install(HttpTimeout) {
+        connectTimeoutMillis = 5000
+    }
+    install(Logging) {
+        level = LogLevel.ALL
+    }
+    install(JsonFeature) {
+        serializer = KotlinxSerializer(json)
+    }
+}
