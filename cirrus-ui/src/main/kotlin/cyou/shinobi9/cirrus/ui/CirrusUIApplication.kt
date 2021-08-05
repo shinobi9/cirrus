@@ -18,8 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
-import tornadofx.App
-import tornadofx.launch
+import tornadofx.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.system.exitProcess
 
@@ -46,6 +45,7 @@ class CirrusUIApplication : App(MainView::class, Styles::class), CoroutineScope 
         stage.initStyle(StageStyle.TRANSPARENT)
         stage.onCloseRequest = closeHandler
         stage.onHidden = closeHandler
+        stage.isAlwaysOnTop = true
         super.start(stage)
     }
 }
