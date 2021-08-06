@@ -1,5 +1,10 @@
 # bilibili danmaku lib & ui
 
+- cirrus-core => bilibili api implement
+- cirrus-ui => desktop application
+
+
+
 ### TODO
 - support proxy
 - more types of message.
