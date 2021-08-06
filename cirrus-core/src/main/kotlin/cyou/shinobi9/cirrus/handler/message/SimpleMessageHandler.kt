@@ -16,6 +16,7 @@ interface SimpleMessageHandler : MessageHandler {
     fun onGuardEnterInLiveRoom(block: (user: String) -> Unit)
     fun onAllTypeMessage(block: (message: String) -> Unit)
     fun onUnknownTypeMessage(block: (message: String) -> Unit)
+    fun onHeartBeat(block: (number: Int) -> Unit)
     fun onError(block: (message: String, e: MessageException) -> Unit)
 }
 
@@ -27,6 +28,7 @@ class SimpleMessageHandlerImpl(
     private var guardEnterInLiveRoom: ((user: String) -> Unit)? = null,
     private var allTypeMessage: ((message: String) -> Unit)? = null,
     private var unknownTypeMessage: ((message: String) -> Unit)? = null,
+    private var heartBeat: ((number: Int) -> Unit)? = null,
     private var error: ((message: String, e: MessageException) -> Unit)? = null
 ) : SimpleMessageHandler {
     override fun onReceiveDanmaku(block: (user: String, said: String) -> Unit) {
@@ -55,6 +57,10 @@ class SimpleMessageHandlerImpl(
 
     override fun onUnknownTypeMessage(block: (message: String) -> Unit) {
         unknownTypeMessage = block
+    }
+
+    override fun onHeartBeat(block: (number: Int) -> Unit) {
+        heartBeat = block
     }
 
     override fun onError(block: (message: String, e: MessageException) -> Unit) {
@@ -102,6 +108,10 @@ class SimpleMessageHandlerImpl(
         } catch (e: Throwable) {
             error?.invoke(message, MessageException("catch an exception while handling a message : $message", e))
         }
+    }
+
+    override fun handleHeartBeat(number: Int) {
+        heartBeat?.invoke(number)
     }
 }
 

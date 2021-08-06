@@ -10,8 +10,7 @@ import cyou.shinobi9.cirrus.ui.model.RoomModel
 import javafx.beans.binding.ObjectBinding
 import javafx.event.EventTarget
 import javafx.geometry.Orientation.VERTICAL
-import javafx.geometry.Pos.BOTTOM_LEFT
-import javafx.geometry.Pos.CENTER_LEFT
+import javafx.geometry.Pos.*
 import javafx.scene.control.ButtonBar.ButtonData.LEFT
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
@@ -31,12 +30,22 @@ class MainView : View("cirrus-ui") {
     init {
         with(root) {
             center {
-                vbox {
-                    style {
-                        padding = box(10.px)
-                        alignment = BOTTOM_LEFT
+                hbox {
+                    vbox {
+                        style {
+                            padding = box(10.px)
+                            alignment = TOP_LEFT
+                        }
+                        label(roomModel.room.popularityDescProp)
+                        vbox {
+                            style {
+                                padding = box(10.px)
+                                prefHeight = 600.px
+                                alignment = BOTTOM_LEFT
+                            }
+                            dispatchDifferentTypeMessage()
+                        }
                     }
-                    dispatchDifferentTypeMessage()
                 }
             }
             right {
@@ -95,26 +104,28 @@ class MainView : View("cirrus-ui") {
                         }
                     }
                     vbox {
+
                         style {
                             padding = box(10.px)
                             spacing = 5.px
                         }
+
                         button("login") {
+                            hiddenWhen(loginModel.loginInfo.loginProp)
+                            managedProperty().bind(visibleProperty())
                             action {
                                 mainController.login(loginModel)
                             }
                         }
                         button("logout") {
+                            visibleWhen(loginModel.loginInfo.loginProp)
+                            managedProperty().bind(visibleProperty())
                             action {
                                 mainController.logout(loginModel)
                             }
                         }
                         imageview(loginModel.loginInfo.qrcodeProp)
-                        label(loginModel.loginInfo.unameProp) {
-                            style {
-                                backgroundColor += Color.RED
-                            }
-                        }
+                        label(loginModel.loginInfo.unameProp)
                     }
                 }
             }

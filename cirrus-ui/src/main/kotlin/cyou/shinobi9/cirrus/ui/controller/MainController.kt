@@ -26,18 +26,25 @@ class MainController : Controller(), CoroutineScope {
     private val job = SupervisorJob()
     private val loginJob = SupervisorJob()
     fun connect(danmakuListModel: DanmakuListModel, roomModel: RoomModel) {
-        backend.messageHandler = configureHandler(danmakuListModel)
+        backend.messageHandler = configureHandler(danmakuListModel, roomModel)
         if (backend.runningJob()) {
             backend.stopAll()
         }
         backend.connectToBLive(roomModel.roomId)
     }
 
-    private fun configureHandler(danmakuListModel: DanmakuListModel): MessageHandler {
+    private fun configureHandler(danmakuListModel: DanmakuListModel, roomModel: RoomModel): MessageHandler {
         val container = danmakuListModel.observableDanmakuList
         return rawMessageHandler {
             onMessage {
                 launch { handleMessage(it, container) }
+            }
+            onHeartBeat {
+                launch {
+                    withContext(Dispatchers.JavaFx) {
+                        roomModel.popularity = it
+                    }
+                }
             }
         }
     }

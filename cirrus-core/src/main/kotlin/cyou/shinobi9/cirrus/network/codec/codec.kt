@@ -10,6 +10,7 @@ import cyou.shinobi9.cirrus.network.packet.Version.WS_BODY_PROTOCOL_VERSION_NORM
 import cyou.shinobi9.cirrus.network.packet.searchOperation
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.util.*
 import java.util.zip.InflaterOutputStream
 import kotlin.text.Charsets.UTF_8
 
@@ -23,7 +24,11 @@ fun decode(
 ) {
     val (mask, payload) = Packet.resolve(buffer)
     when (mask.code) {
-        HEARTBEAT_REPLY -> LOG.debug { "receive heart beat packet" }
+        HEARTBEAT_REPLY -> {
+            val message = payload.int
+            messageHandler?.handleHeartBeat(message)
+            LOG.debug { "receive heart beat packet : $message" }
+        }
         AUTH_REPLY -> {
             val message = payload.array().toString(UTF_8)
             LOG.info { "auth info response => $message" }

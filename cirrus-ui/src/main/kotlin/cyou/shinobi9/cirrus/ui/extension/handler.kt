@@ -15,7 +15,7 @@ data class GiftInfo(
     val giftName: String,
     val num: Int,
 
-    )
+)
 
 @Suppress("DuplicatedCode")
 internal suspend fun handleMessage(rawJsonStr: String, container: ObservableList<DanmakuModel>) {
