@@ -5,26 +5,27 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${user.dir}/log/cirrus-ui.log</file>
+        <file>${user.dir}/log/cirrus-ui.test.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>cirrus-ui.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>cirrus-ui.test.%d{yyyy-MM-dd}.log</fileNamePattern>
 
-            <!-- keep 30 days' worth of history capped at 3GB total size -->
+            <!-- keep 30 days' worth of history capped at 100MB total size -->
             <maxHistory>30</maxHistory>
             <totalSizeCap>100MB</totalSizeCap>
+
         </rollingPolicy>
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
     <root level="INFO">
-        <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
+        <appender-ref ref="STDOUT"/>
     </root>
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
-    <logger name="cyou.shinobi9.cirrus" level="INFO"/>
-    <logger name="cyou.shinobi9.cirrus.ui" level="INFO"/>
+    <logger name="cyou.shinobi9.cirrus" level="DEBUG"/>
+    <logger name="cyou.shinobi9.cirrus.ui" level="DEBUG"/>
     <logger name="io.ktor.client.HttpClient" level="WARN"/>
 </configuration>
