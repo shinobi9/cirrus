@@ -6,9 +6,8 @@ import cyou.shinobi9.cirrus.ui.LOG
 import cyou.shinobi9.cirrus.ui.model.Danmaku
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
 import javafx.collections.ObservableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.*
 
@@ -16,10 +15,10 @@ data class GiftInfo(
     val giftName: String,
     val num: Int,
 
-)
+    )
 
 @Suppress("DuplicatedCode")
-internal fun CoroutineScope.handleMessage(rawJsonStr: String, container: ObservableList<DanmakuModel>) {
+internal suspend fun handleMessage(rawJsonStr: String, container: ObservableList<DanmakuModel>) {
     val root = Json.parseToJsonElement(rawJsonStr)
     val cmd = root.jsonObject["cmd"]?.jsonPrimitive?.content!!
     when (searchCMD(cmd)) {
@@ -62,14 +61,9 @@ internal fun CoroutineScope.handleMessage(rawJsonStr: String, container: Observa
     }
 }
 
-internal fun CoroutineScope.pushToVM(
-    container: ObservableList<DanmakuModel>,
-    danmaku: Danmaku
-) {
-    launch {
-        withContext(currentCoroutineContext()) {
-            container.queueAdd(DanmakuModel(danmaku))
-        }
+internal suspend fun pushToVM(container: ObservableList<DanmakuModel>, danmaku: Danmaku) {
+    withContext(Dispatchers.JavaFx) {
+        container.queueAdd(DanmakuModel(danmaku))
     }
 }
 

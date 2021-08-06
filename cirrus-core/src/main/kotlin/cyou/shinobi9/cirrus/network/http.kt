@@ -13,7 +13,7 @@ import kotlinx.serialization.json.jsonPrimitive
 
 class JsonResolveException(message: String) : RuntimeException(message)
 
-fun jsonResolveError(message: String = "json resolve error"): Nothing = throw JsonResolveException(message)
+fun jsonResolveError(message: String): Nothing = throw JsonResolveException("json resolve error : [$message]")
 
 @Serializable
 data class Wrapper<T>(
@@ -58,7 +58,7 @@ suspend fun HttpClient.userAvatar(uid: Int): String {
     }
     val data = response.jsonObject["data"]?.jsonObject
     val face = data?.get("face")?.jsonPrimitive?.content
-    return face ?: jsonResolveError("resolve avatar error")
+    return face ?: jsonResolveError("avatar")
 }
 
 suspend fun HttpClient.resolveRealRoomId(roomId: Int): Int {
@@ -67,7 +67,7 @@ suspend fun HttpClient.resolveRealRoomId(roomId: Int): Int {
     }
     val data = response.jsonObject["data"]?.jsonObject
     val realRoomId = data?.get("room_id")?.jsonPrimitive?.int
-    return realRoomId ?: jsonResolveError("resolve real room id error")
+    return realRoomId ?: jsonResolveError("real room id")
 }
 
 suspend fun HttpClient.loadBalanceWebsocketServer(realRoomId: Int): LoadBalanceInfo {
@@ -76,7 +76,7 @@ suspend fun HttpClient.loadBalanceWebsocketServer(realRoomId: Int): LoadBalanceI
         parameter("platform", "pc")
         parameter("player", "web")
     }
-    return response.data ?: jsonResolveError("resolve load balance info error")
+    return response.data ?: jsonResolveError("load balance info")
 }
 
 suspend inline fun WebSocketSession.sendPacket(packet: Packet) =

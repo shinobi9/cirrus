@@ -1,4 +1,4 @@
-package core
+package cyou.shinobi9.cirrus.test
 
 fun main() {
     TEST_CIRRUS.config.reconnect = false

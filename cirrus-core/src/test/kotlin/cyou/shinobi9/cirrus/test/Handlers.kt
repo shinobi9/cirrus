@@ -1,4 +1,4 @@
-package core
+package cyou.shinobi9.cirrus.test
 
 import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.handler.message.rawMessageHandler

@@ -9,10 +9,11 @@ import cyou.shinobi9.cirrus.ui.model.RoomModel
 import javafx.beans.binding.ObjectBinding
 import javafx.event.EventTarget
 import javafx.geometry.Orientation.VERTICAL
-import javafx.geometry.Pos
-import javafx.scene.control.ButtonBar.ButtonData
+import javafx.geometry.Pos.BOTTOM_LEFT
+import javafx.geometry.Pos.CENTER_LEFT
+import javafx.scene.control.ButtonBar.ButtonData.LEFT
 import javafx.scene.image.Image
-import javafx.scene.layout.BackgroundRepeat
+import javafx.scene.layout.BackgroundRepeat.NO_REPEAT
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.stage.Stage
@@ -31,7 +32,7 @@ class MainView : View("cirrus-ui") {
             style {
 //                backgroundColor += Color.TRANSPARENT
                 backgroundColor += Color.web("#000000", 0.2)
-                backgroundRepeat += BackgroundRepeat.NO_REPEAT to BackgroundRepeat.NO_REPEAT
+                backgroundRepeat += NO_REPEAT to NO_REPEAT
                 prefWidth = 600.px
                 prefHeight = 400.px
             }
@@ -39,7 +40,7 @@ class MainView : View("cirrus-ui") {
                 vbox {
                     style {
                         padding = box(10.px)
-                        alignment = Pos.BOTTOM_LEFT
+                        alignment = BOTTOM_LEFT
                     }
                     dispatchDifferentTypeMessage()
                 }
@@ -58,7 +59,7 @@ class MainView : View("cirrus-ui") {
                         fieldset(labelPosition = VERTICAL) {
                             field {
                                 buttonbar {
-                                    button("start", type = ButtonData.LEFT) {
+                                    button("start", type = LEFT) {
                                         action {
                                             mainController.connect(danmakuListModel, roomModel)
                                         }
@@ -67,7 +68,7 @@ class MainView : View("cirrus-ui") {
                             }
                             field {
                                 buttonbar {
-                                    button("clean", type = ButtonData.LEFT) {
+                                    button("clean cache", type = LEFT) {
                                         action {
                                             DanmakuModel.cacheManager.clearCache()
                                         }
@@ -76,7 +77,7 @@ class MainView : View("cirrus-ui") {
                             }
                             field {
                                 buttonbar {
-                                    button("exit", type = ButtonData.LEFT) {
+                                    button("exit", type = LEFT) {
                                         action {
                                             (scene.window as Stage).close()
                                         }
@@ -84,6 +85,23 @@ class MainView : View("cirrus-ui") {
                                 }
                             }
                         }
+                    }
+                    separator {
+                        style {
+                            padding = box(0.px, 10.px)
+                        }
+                    }
+                    vbox {
+                        style {
+                            padding = box(10.px)
+                        }
+                        button("login") {
+                            action {
+                                mainController.applyForQrcode()
+                            }
+                        }
+                        label("")
+                        label("")
                     }
                 }
             }
@@ -125,7 +143,7 @@ class MainView : View("cirrus-ui") {
 
     private fun EventTarget.avatarDanmaku(avatarProp: ObjectBinding<Image>, text: String) = hbox {
         style {
-            alignment = Pos.CENTER_LEFT
+            alignment = CENTER_LEFT
             spacing = 5.px
 //            borderColor += box(Color.RED)
         }

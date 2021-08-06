@@ -3,12 +3,15 @@ package cyou.shinobi9.cirrus.ui.controller
 import cyou.shinobi9.cirrus.Cirrus
 import cyou.shinobi9.cirrus.handler.message.MessageHandler
 import cyou.shinobi9.cirrus.handler.message.rawMessageHandler
+import cyou.shinobi9.cirrus.network.applyForLoginQrcode
+import cyou.shinobi9.cirrus.ui.defaultCookiesClient
 import cyou.shinobi9.cirrus.ui.extension.handleMessage
 import cyou.shinobi9.cirrus.ui.model.DanmakuListModel
 import cyou.shinobi9.cirrus.ui.model.RoomModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
+import kotlinx.coroutines.launch
 import tornadofx.Controller
 import kotlin.coroutines.CoroutineContext
 
@@ -30,8 +33,15 @@ class MainController : Controller(), CoroutineScope {
         val container = danmakuListModel.observableDanmakuList
         return rawMessageHandler {
             onMessage {
-                handleMessage(it, container)
+                launch { handleMessage(it, container) }
             }
+        }
+    }
+
+    fun applyForQrcode() {
+        launch {
+            val (url, oauthKey) = defaultCookiesClient.applyForLoginQrcode()
+            url
         }
     }
 }

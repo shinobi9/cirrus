@@ -5,6 +5,7 @@ import cyou.shinobi9.cirrus.ui.view.MainView
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
+import io.ktor.client.features.cookies.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
@@ -18,7 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
-import tornadofx.*
+import tornadofx.App
+import tornadofx.launch
 import kotlin.coroutines.CoroutineContext
 import kotlin.system.exitProcess
 
@@ -75,5 +77,11 @@ internal val defaultClient = HttpClient(CIO) {
     }
     install(JsonFeature) {
         serializer = KotlinxSerializer(json)
+    }
+}
+
+internal val defaultCookiesClient = defaultClient.config {
+    install(HttpCookies) {
+        storage = AcceptAllCookiesStorage()
     }
 }
