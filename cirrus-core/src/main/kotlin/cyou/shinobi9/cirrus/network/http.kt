@@ -6,7 +6,10 @@ import io.ktor.client.request.*
 import io.ktor.http.cio.websocket.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class JsonResolveException(message: String) : RuntimeException(message)
 
@@ -55,7 +58,7 @@ suspend fun HttpClient.userAvatar(uid: Int): String {
     }
     val data = response.jsonObject["data"]?.jsonObject
     val face = data?.get("face")?.jsonPrimitive?.content
-    return  face ?: jsonResolveError("resolve avatar error")
+    return face ?: jsonResolveError("resolve avatar error")
 }
 
 suspend fun HttpClient.resolveRealRoomId(roomId: Int): Int {

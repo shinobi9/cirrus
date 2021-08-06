@@ -1,23 +1,20 @@
 package cyou.shinobi9.cirrus.network.packet
 
 import cyou.shinobi9.cirrus.json
+import cyou.shinobi9.cirrus.network.packet.Operation.AUTH
+import cyou.shinobi9.cirrus.network.packet.Operation.HEARTBEAT
+import cyou.shinobi9.cirrus.network.packet.Version.WS_BODY_PROTOCOL_VERSION_INT
 import kotlinx.serialization.encodeToString
 import java.nio.ByteBuffer
 
 object Packets {
     private const val heartBeatContent = "[object Object]"
     val heartBeat = Packet.createPacket(
-        PacketMask(
-            Version.WS_BODY_PROTOCOL_VERSION_INT,
-            Operation.HEARTBEAT
-        ),
+        PacketMask(WS_BODY_PROTOCOL_VERSION_INT, HEARTBEAT),
         ByteBuffer.wrap(heartBeatContent.toByteArray())
     )
     val auth = fun(roomId: Int, token: String) = Packet.createPacket(
-        PacketMask(
-            Version.WS_BODY_PROTOCOL_VERSION_INT,
-            Operation.AUTH
-        ),
+        PacketMask(WS_BODY_PROTOCOL_VERSION_INT, AUTH),
         ByteBuffer.wrap(
             json.encodeToString(AuthInfo(roomId = roomId, key = token)).toByteArray()
         )

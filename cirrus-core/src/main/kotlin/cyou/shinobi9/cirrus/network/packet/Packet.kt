@@ -38,11 +38,7 @@ class Packet private constructor(packetMask: PacketMask, packetPayload: ByteBuff
                 val body = ByteArray(buffer.remaining())
                 get(body)
                 return createPacket(
-                    PacketMask(
-                        searchVersion(version, true),
-                        searchOperation(code, true),
-                        seq
-                    ),
+                    PacketMask(searchVersion(version, true), searchOperation(code, true), seq),
                     ByteBuffer.wrap(body), packLength, maskLength
                 )
             }

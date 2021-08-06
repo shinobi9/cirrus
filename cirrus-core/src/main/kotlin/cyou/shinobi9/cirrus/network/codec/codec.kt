@@ -19,7 +19,6 @@ fun decode(
     buffer: ByteBuffer,
     messageHandler: MessageHandler?,
     eventHandler: EventHandler?
-
 ) {
     val packet = Packet.resolve(buffer)
     val mask = packet.mask
