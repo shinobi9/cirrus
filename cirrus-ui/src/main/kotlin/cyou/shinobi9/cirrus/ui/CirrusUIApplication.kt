@@ -9,7 +9,6 @@ import io.ktor.client.features.cookies.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
-import io.ktor.client.features.websocket.*
 import javafx.event.EventHandler
 import javafx.stage.Stage
 import javafx.stage.StageStyle
@@ -19,8 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
-import tornadofx.App
-import tornadofx.launch
+import tornadofx.*
 import kotlin.coroutines.CoroutineContext
 import kotlin.system.exitProcess
 
@@ -68,7 +66,9 @@ internal val json = Json {
 }
 internal val defaultClient = HttpClient(CIO) {
     BrowserUserAgent()
-    install(WebSockets)
+    install(HttpRedirect) {
+        allowHttpsDowngrade = true
+    }
     install(HttpTimeout) {
         connectTimeoutMillis = 5000
     }

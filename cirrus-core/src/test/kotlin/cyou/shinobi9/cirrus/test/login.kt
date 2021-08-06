@@ -11,13 +11,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 
 fun main() = runBlocking {
-//    """https://passport.biligame.com/crossDomain?DedeUserID=3220953&DedeUserID__ckMd5=e1f0740e575c17a6&Expires=15551000&SESSDATA=c99d7239%2C1643771163%2C2d12c%2A81&bili_jct=743eb60127a22a6c782392dc66e21987&gourl=http%3A%2F%2Fwww.bilibili.com"""
-//        .decodeURLQueryComponent().also { println(it) }
-//    Unit
     defaultCookiesClient.login()
     println(defaultCookiesClient.accountInfo())
 }
-
 
 suspend fun HttpClient.login() {
     val (url, oauthKey) = applyForLoginQrcode()

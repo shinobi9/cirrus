@@ -1,8 +1,10 @@
+@file:Suppress("SpellCheckingInspection")
+
 package cyou.shinobi9.cirrus.ui
 
+import javafx.scene.layout.BackgroundRepeat
 import javafx.scene.paint.Color
-import tornadofx.Stylesheet
-import tornadofx.px
+import tornadofx.*
 
 class Styles : Stylesheet() {
     companion object {
@@ -11,6 +13,15 @@ class Styles : Stylesheet() {
     }
 
     init {
+
+        root {
+            //                backgroundColor += Color.TRANSPARENT
+            backgroundColor += Color.web("#000000", 0.2)
+            backgroundRepeat += BackgroundRepeat.NO_REPEAT to BackgroundRepeat.NO_REPEAT
+            prefWidth = 600.px
+            prefHeight = 500.px
+        }
+
         label {
 //            padding = box(10.px)
 //            fontSize = 20.px

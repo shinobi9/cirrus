@@ -2,7 +2,7 @@ package cyou.shinobi9.cirrus.ui.cache
 
 import cyou.shinobi9.cirrus.network.userAvatar
 import cyou.shinobi9.cirrus.ui.LOG
-import cyou.shinobi9.cirrus.ui.defaultClient
+import cyou.shinobi9.cirrus.ui.defaultCookiesClient
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.InputStream
@@ -55,7 +55,7 @@ class CacheManager : CoroutineScope {
 
     private fun resolveByHttp(id: Int): Triple<Boolean, InputStream?, String?> {
         return runBlocking {
-            val imageUrl = defaultClient.userAvatar(id)
+            val imageUrl = defaultCookiesClient.userAvatar(id)
             LOG.debug { imageUrl }
             val url = URL(imageUrl)
             val ext = url.path.replace("/", "").split(".")[1]

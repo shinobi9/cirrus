@@ -5,6 +5,7 @@ import cyou.shinobi9.cirrus.ui.controller.MainController
 import cyou.shinobi9.cirrus.ui.extension.GiftInfo
 import cyou.shinobi9.cirrus.ui.model.DanmakuListModel
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
+import cyou.shinobi9.cirrus.ui.model.LoginModel
 import cyou.shinobi9.cirrus.ui.model.RoomModel
 import javafx.beans.binding.ObjectBinding
 import javafx.event.EventTarget
@@ -13,7 +14,6 @@ import javafx.geometry.Pos.BOTTOM_LEFT
 import javafx.geometry.Pos.CENTER_LEFT
 import javafx.scene.control.ButtonBar.ButtonData.LEFT
 import javafx.scene.image.Image
-import javafx.scene.layout.BackgroundRepeat.NO_REPEAT
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.stage.Stage
@@ -26,16 +26,10 @@ class MainView : View("cirrus-ui") {
     private var yOffset = 0.0
     private val danmakuListModel = DanmakuListModel()
     private val roomModel = RoomModel()
+    private val loginModel = LoginModel()
 
     init {
         with(root) {
-            style {
-//                backgroundColor += Color.TRANSPARENT
-                backgroundColor += Color.web("#000000", 0.2)
-                backgroundRepeat += NO_REPEAT to NO_REPEAT
-                prefWidth = 600.px
-                prefHeight = 400.px
-            }
             center {
                 vbox {
                     style {
@@ -68,6 +62,15 @@ class MainView : View("cirrus-ui") {
                             }
                             field {
                                 buttonbar {
+                                    button("stop", type = LEFT) {
+                                        action {
+                                            mainController.stop()
+                                        }
+                                    }
+                                }
+                            }
+                            field {
+                                buttonbar {
                                     button("clean cache", type = LEFT) {
                                         action {
                                             DanmakuModel.cacheManager.clearCache()
@@ -94,14 +97,24 @@ class MainView : View("cirrus-ui") {
                     vbox {
                         style {
                             padding = box(10.px)
+                            spacing = 5.px
                         }
                         button("login") {
                             action {
-                                mainController.applyForQrcode()
+                                mainController.login(loginModel)
                             }
                         }
-                        label("")
-                        label("")
+                        button("logout") {
+                            action {
+                                mainController.logout(loginModel)
+                            }
+                        }
+                        imageview(loginModel.loginInfo.qrcodeProp)
+                        label(loginModel.loginInfo.unameProp) {
+                            style {
+                                backgroundColor += Color.RED
+                            }
+                        }
                     }
                 }
             }

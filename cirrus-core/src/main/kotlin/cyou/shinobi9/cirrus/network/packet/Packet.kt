@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package cyou.shinobi9.cirrus.network.packet
 
 import java.nio.ByteBuffer
@@ -5,6 +7,7 @@ import java.nio.ByteBuffer
 class Packet private constructor(packetMask: PacketMask, packetPayload: ByteBuffer) {
     var mask: PacketMask = packetMask
         private set
+    @Suppress("MemberVisibilityCanBePrivate")
     var payload: ByteBuffer = packetPayload
         private set
 

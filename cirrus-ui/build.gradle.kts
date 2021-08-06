@@ -17,6 +17,7 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
+val zxing_version = "3.4.1"
 
 dependencies {
     implementation(project(":cirrus-core"))
@@ -29,10 +30,10 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.1-native-mt")
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    implementation("com.google.zxing:core:3.4.1")
+    implementation("com.google.zxing:core:$zxing_version")
+    implementation("com.google.zxing:javase:$zxing_version")
 }
 
 tasks.withType<KotlinCompile> {
@@ -57,11 +58,11 @@ tasks.register<Jar>("uber") {
     dependsOn(configurations.runtimeClasspath)
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-    }) {
+    }, {
         exclude("META-INF/MANIFEST.MF")
         exclude("META-INF/LICENSE")
         exclude("module-info.class")
         exclude("META-INF/NOTICE")
         exclude("META-INF/versions/9/module-info.class")
-    }
+    })
 }

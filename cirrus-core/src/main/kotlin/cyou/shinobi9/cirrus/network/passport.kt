@@ -63,7 +63,6 @@ enum class LoginInfoCode(val code: Int) {
     NOT_CONFIRM(-5),
 }
 
-
 @Serializable
 data class AccountInfo(
     val birthday: String,
