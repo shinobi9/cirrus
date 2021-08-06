@@ -60,4 +60,8 @@ class Packet private constructor(packetMask: PacketMask, packetPayload: ByteBuff
     private fun calcMaskLength() {
         mask.packLength = mask.maskLength + payload.limit()
     }
+
+    operator fun component1(): PacketMask = mask
+
+    operator fun component2(): ByteBuffer = payload
 }

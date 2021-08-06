@@ -8,15 +8,13 @@ import kotlinx.serialization.encodeToString
 import java.nio.ByteBuffer
 
 object Packets {
-    private const val heartBeatContent = "[object Object]"
+    private val heartBeatContent = "[object Object]".toByteArray()
     val heartBeat = Packet.createPacket(
         PacketMask(WS_BODY_PROTOCOL_VERSION_INT, HEARTBEAT),
-        ByteBuffer.wrap(heartBeatContent.toByteArray())
+        ByteBuffer.wrap(heartBeatContent)
     )
     val auth = fun(roomId: Int, token: String) = Packet.createPacket(
         PacketMask(WS_BODY_PROTOCOL_VERSION_INT, AUTH),
-        ByteBuffer.wrap(
-            json.encodeToString(AuthInfo(roomId = roomId, key = token)).toByteArray()
-        )
+        ByteBuffer.wrap(json.encodeToString(AuthInfo(roomId = roomId, key = token)).toByteArray())
     )
 }

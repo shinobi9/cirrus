@@ -69,7 +69,6 @@ class Cirrus(
         job.cancelChildren()
     }
 
-
     @Suppress("LocalVariableName")
     fun connectToBLive(roomId: Int? = null, realRoomId: Int? = null) = launch {
         LOG.debug { "ready to connect" }

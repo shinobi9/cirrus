@@ -5,7 +5,8 @@ import cyou.shinobi9.cirrus.handler.event.EventHandler
 import cyou.shinobi9.cirrus.handler.message.MessageHandler
 import cyou.shinobi9.cirrus.network.packet.Operation.*
 import cyou.shinobi9.cirrus.network.packet.Packet
-import cyou.shinobi9.cirrus.network.packet.Version
+import cyou.shinobi9.cirrus.network.packet.Version.WS_BODY_PROTOCOL_VERSION_DEFLATE
+import cyou.shinobi9.cirrus.network.packet.Version.WS_BODY_PROTOCOL_VERSION_NORMAL
 import cyou.shinobi9.cirrus.network.packet.searchOperation
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
@@ -20,9 +21,7 @@ fun decode(
     messageHandler: MessageHandler?,
     eventHandler: EventHandler?
 ) {
-    val packet = Packet.resolve(buffer)
-    val mask = packet.mask
-    val payload = packet.payload
+    val (mask, payload) = Packet.resolve(buffer)
     when (mask.code) {
         HEARTBEAT_REPLY -> LOG.debug { "receive heart beat packet" }
         AUTH_REPLY -> {
@@ -30,11 +29,11 @@ fun decode(
             LOG.info { "auth info response => $message" }
         }
         SEND_MSG_REPLY -> {
-            if (mask.version == Version.WS_BODY_PROTOCOL_VERSION_DEFLATE) {
+            if (mask.version == WS_BODY_PROTOCOL_VERSION_DEFLATE) {
                 decode(ByteBuffer.wrap(uncompressZlib(payload.array())), messageHandler, eventHandler)
                 return
             }
-            require(mask.version == Version.WS_BODY_PROTOCOL_VERSION_NORMAL)
+            require(mask.version == WS_BODY_PROTOCOL_VERSION_NORMAL)
             val byteArray = ByteArray(mask.packLength - mask.maskLength)
             payload.get(byteArray)
             byteArray.toString(UTF_8).let { message ->
