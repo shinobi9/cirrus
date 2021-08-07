@@ -3,6 +3,7 @@ package cyou.shinobi9.cirrus.ui
 import cyou.shinobi9.cirrus.ui.view.DebugView
 import cyou.shinobi9.cirrus.ui.view.MainView
 import io.ktor.client.*
+import io.ktor.client.engine.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.*
 import io.ktor.client.features.cookies.*
@@ -77,6 +78,9 @@ internal val defaultClient = HttpClient(CIO) {
     }
     install(JsonFeature) {
         serializer = KotlinxSerializer(json)
+    }
+    engine {
+        proxy = ProxyBuilder.http("http://127.0.0.1:7890")
     }
 }
 

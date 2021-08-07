@@ -3,10 +3,7 @@ package cyou.shinobi9.cirrus.ui.view
 import cyou.shinobi9.cirrus.network.packet.CMD.*
 import cyou.shinobi9.cirrus.ui.controller.MainController
 import cyou.shinobi9.cirrus.ui.extension.GiftInfo
-import cyou.shinobi9.cirrus.ui.model.DanmakuListModel
-import cyou.shinobi9.cirrus.ui.model.DanmakuModel
-import cyou.shinobi9.cirrus.ui.model.LoginModel
-import cyou.shinobi9.cirrus.ui.model.RoomModel
+import cyou.shinobi9.cirrus.ui.model.*
 import javafx.beans.binding.ObjectBinding
 import javafx.event.EventTarget
 import javafx.geometry.Orientation.VERTICAL
@@ -43,7 +40,31 @@ class MainView : View("cirrus-ui") {
                                 prefHeight = 600.px
                                 alignment = BOTTOM_LEFT
                             }
-                            dispatchDifferentTypeMessage()
+//                            dispatchDifferentTypeMessage()
+                            repeat(10) {
+                                hbox {
+                                    style {
+                                        padding = box(2.px, 0.px)
+                                    }
+                                    hbox {
+                                        style {
+                                            alignment = CENTER_LEFT
+                                            spacing = 5.px
+                                            borderColor += box(Color.RED)
+                                        }
+                                        println(danmakuListModel.observableDanmakuList[it].imageProp)
+                                        imageview(danmakuListModel.observableDanmakuList[it].imageProp) {
+                                            fitWidth = 30.0
+                                            fitHeight = 30.0
+                                            clip = Circle(15.0, 15.0, 15.0, Color.AQUA)
+                                        }
+                                        println(danmakuListModel.observableDanmakuList[it].danmakuContentProp)
+                                        label(danmakuListModel.observableDanmakuList[it].danmakuContentProp) {
+                                            textFill = Color.WHITE
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -165,11 +186,10 @@ class MainView : View("cirrus-ui") {
         }
     }
 
-    private fun EventTarget.avatarDanmaku(avatarProp: ObjectBinding<Image>, text: String) = hbox {
+    private fun EventTarget.avatarDanmaku(avatarProp: ObjectBinding<Image?>, text: String) = hbox {
         style {
             alignment = CENTER_LEFT
             spacing = 5.px
-//            borderColor += box(Color.RED)
         }
         imageview(avatarProp) {
             fitWidth = 30.0

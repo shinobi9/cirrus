@@ -5,6 +5,7 @@ import cyou.shinobi9.cirrus.network.packet.searchCMD
 import cyou.shinobi9.cirrus.ui.LOG
 import cyou.shinobi9.cirrus.ui.model.Danmaku
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
+import cyou.shinobi9.cirrus.ui.model.queueAdd
 import javafx.collections.ObservableList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.javafx.JavaFx
@@ -67,10 +68,4 @@ internal suspend fun pushToVM(container: ObservableList<DanmakuModel>, danmaku: 
     }
 }
 
-internal fun ObservableList<DanmakuModel>.queueAdd(danmakuModel: DanmakuModel) {
-    if (size > 10) {
-        val removed = removeAt(0)
-        removed.danmaku.extra.clear()
-    }
-    add(danmakuModel)
-}
+

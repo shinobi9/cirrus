@@ -34,7 +34,7 @@ class DebugController : Controller(), CoroutineScope {
     private fun addItemToViewModel(user: String, said: String, danmakuModel: DebugDanmakuModel) {
         launch {
             LOG.info { "$user : $said" }
-            withContext(currentCoroutineContext()) {
+            withContext(Dispatchers.JavaFx) {
                 danmakuModel.observableDebugDanmakuList.add(DebugDanmaku(user, said))
             }
         }

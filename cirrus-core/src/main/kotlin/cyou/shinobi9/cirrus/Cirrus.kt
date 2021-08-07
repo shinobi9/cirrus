@@ -129,7 +129,7 @@ class Cirrus(
         realRoomId: Int,
         urlString: String,
         token: String,
-    ) = withContext(currentCoroutineContext()) {
+    ) = withContext(coroutineContext) {
         val cirrus = this@Cirrus
         eventHandler?.handle(EventType.CONNECT, cirrus)
         val session = client.webSocketSession { url(urlString) }
