@@ -52,16 +52,15 @@ class CacheManager : CoroutineScope {
             val file = files?.singleOrNull { it.name.split(".")[0] == key }
             return@withContext if (file != null) {
                 LOG.debug { "resolve from ${file.absolutePath}" }
-                true to file.absolutePath
+                true to file.toURI().toString()
             } else false to null
         }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun resolveByHttp(id: Int): Triple<Boolean, String?, String?> = withContext(Dispatchers.IO) {
         val imageUrl = defaultCookiesClient.userAvatar(id)
-        val mini = "$imageUrl@60w_60h_1o.webp"
+        val mini = "$imageUrl@30w_30h_1o.jpg"
         LOG.debug { mini }
-        val ext = "webp"
+        val ext = "jpg"
         val name = """$id.$ext"""
         return@withContext Triple(true, mini, name)
     }
@@ -81,14 +80,13 @@ class CacheManager : CoroutineScope {
     private suspend fun doResolveAvatar(id: Int): String? {
         checkExist()
         checkAvatarExist()
-        val (onDisk, inputStream) = resolveInDisk(AVATAR_DIR, id.toString())
+        val (onDisk, fileUrl) = resolveInDisk(AVATAR_DIR, id.toString())
         if (onDisk) {
-            return inputStream!!
+            return fileUrl!!
         }
         val (result, url, name) = resolveByHttp(id)
         if (result) {
             val path = save(AVATAR_DIR, name!!, url!!)
-            println(path.toUri().toString())
             return path.toUri().toString()
         }
         return null

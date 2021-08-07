@@ -1,5 +1,6 @@
 package cyou.shinobi9.cirrus.ui
 
+import cyou.shinobi9.cirrus.ui.cache.CacheManager
 import cyou.shinobi9.cirrus.ui.view.DebugView
 import cyou.shinobi9.cirrus.ui.view.MainView
 import io.ktor.client.*
@@ -89,3 +90,5 @@ internal val defaultCookiesClient = defaultClient.config {
         storage = AcceptAllCookiesStorage()
     }
 }
+
+val cacheManager: CacheManager = CacheManager()

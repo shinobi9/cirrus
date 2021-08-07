@@ -1,10 +1,13 @@
 package cyou.shinobi9.cirrus.ui.view
 
 import cyou.shinobi9.cirrus.network.packet.CMD.*
+import cyou.shinobi9.cirrus.ui.cacheManager
 import cyou.shinobi9.cirrus.ui.controller.MainController
 import cyou.shinobi9.cirrus.ui.extension.GiftInfo
-import cyou.shinobi9.cirrus.ui.model.*
-import javafx.beans.binding.ObjectBinding
+import cyou.shinobi9.cirrus.ui.model.DanmakuListModel
+import cyou.shinobi9.cirrus.ui.model.DanmakuModel
+import cyou.shinobi9.cirrus.ui.model.LoginModel
+import cyou.shinobi9.cirrus.ui.model.RoomModel
 import javafx.event.EventTarget
 import javafx.geometry.Orientation.VERTICAL
 import javafx.geometry.Pos.*
@@ -40,31 +43,7 @@ class MainView : View("cirrus-ui") {
                                 prefHeight = 600.px
                                 alignment = BOTTOM_LEFT
                             }
-//                            dispatchDifferentTypeMessage()
-                            repeat(10) {
-                                hbox {
-                                    style {
-                                        padding = box(2.px, 0.px)
-                                    }
-                                    hbox {
-                                        style {
-                                            alignment = CENTER_LEFT
-                                            spacing = 5.px
-                                            borderColor += box(Color.RED)
-                                        }
-                                        println(danmakuListModel.observableDanmakuList[it].imageProp)
-                                        imageview(danmakuListModel.observableDanmakuList[it].imageProp) {
-                                            fitWidth = 30.0
-                                            fitHeight = 30.0
-                                            clip = Circle(15.0, 15.0, 15.0, Color.AQUA)
-                                        }
-                                        println(danmakuListModel.observableDanmakuList[it].danmakuContentProp)
-                                        label(danmakuListModel.observableDanmakuList[it].danmakuContentProp) {
-                                            textFill = Color.WHITE
-                                        }
-                                    }
-                                }
-                            }
+                            dispatchDifferentTypeMessage()
                         }
                     }
                 }
@@ -103,7 +82,16 @@ class MainView : View("cirrus-ui") {
                                 buttonbar {
                                     button("clean cache", type = LEFT) {
                                         action {
-                                            DanmakuModel.cacheManager.clearCache()
+                                            cacheManager.clearCache()
+                                        }
+                                    }
+                                }
+                            }
+                            field {
+                                buttonbar {
+                                    button(danmakuListModel.showAvatarDescBinding, type = LEFT) {
+                                        action {
+                                            danmakuListModel.showAvatar = !danmakuListModel.showAvatar
                                         }
                                     }
                                 }
@@ -130,7 +118,6 @@ class MainView : View("cirrus-ui") {
                             padding = box(10.px)
                             spacing = 5.px
                         }
-
                         button("login") {
                             hiddenWhen(loginModel.loginInfo.loginProp)
                             managedProperty().bind(visibleProperty())
@@ -172,12 +159,13 @@ class MainView : View("cirrus-ui") {
                 padding = box(2.px, 0.px)
             }
             with(it) {
+                val show = danmakuListModel.showAvatar
                 when (danmaku.type) {
-                    DANMU_MSG -> avatarDanmaku(it.imageProp, "${danmaku.user} : ${danmaku.content}")
-                    INTERACT_WORD -> avatarDanmaku(it.imageProp, "${danmaku.user} 进入了直播间")
+                    DANMU_MSG -> avatarDanmaku(it, "${danmaku.user} : ${danmaku.content}", show)
+                    INTERACT_WORD -> avatarDanmaku(it, "${danmaku.user} 进入了直播间", show)
                     SEND_GIFT -> {
                         val gift = danmaku.content as GiftInfo
-                        avatarDanmaku(it.imageProp, "${danmaku.user} 送出了 ${gift.num} 个 ${gift.giftName}")
+                        avatarDanmaku(it, "${danmaku.user} 送出了 ${gift.num} 个 ${gift.giftName}", show)
                     }
                     else -> {
                     }
@@ -186,15 +174,18 @@ class MainView : View("cirrus-ui") {
         }
     }
 
-    private fun EventTarget.avatarDanmaku(avatarProp: ObjectBinding<Image?>, text: String) = hbox {
+    private fun EventTarget.avatarDanmaku(model: DanmakuModel, text: String, showAvatar: Boolean) = hbox {
         style {
             alignment = CENTER_LEFT
             spacing = 5.px
         }
-        imageview(avatarProp) {
-            fitWidth = 30.0
-            fitHeight = 30.0
-            clip = Circle(15.0, 15.0, 15.0, Color.AQUA)
+        if (showAvatar) {
+            imageview {
+                image = Image(cacheManager.resolveAvatar(model.danmaku.id), 30.0, 30.0, true, true, true)
+                fitWidth = 30.0
+                fitHeight = 30.0
+                clip = Circle(15.0, 15.0, 15.0, Color.AQUA)
+            }
         }
         label(text) {
             textFill = Color.WHITE
