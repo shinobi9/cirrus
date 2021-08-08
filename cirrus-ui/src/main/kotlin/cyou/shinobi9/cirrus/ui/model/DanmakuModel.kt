@@ -80,9 +80,13 @@ class DanmakuListModel(
 }
 
 internal fun ObservableList<DanmakuModel>.queueAdd(danmakuModel: DanmakuModel) {
-    repeat(MAX_SIZE) {
-        moveDownAt(it)
-    }
+    moveDownAll()
     removeLast()
     add(danmakuModel)
+}
+
+fun <T> MutableList<T>.moveDownAll() {
+    for (i in 0..lastIndex) {
+        moveDownAt(i)
+    }
 }
