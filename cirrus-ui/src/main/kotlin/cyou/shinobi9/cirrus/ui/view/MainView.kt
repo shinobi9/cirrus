@@ -158,14 +158,14 @@ class MainView : View("cirrus-ui") {
             style {
                 padding = box(2.px, 0.px)
             }
-            with(it) {
+            with(it.danmaku) {
                 val show = danmakuListModel.showAvatar
-                when (danmaku.type) {
-                    DANMU_MSG -> avatarDanmaku(it, "${danmaku.user} : ${danmaku.content}", show)
-                    INTERACT_WORD -> avatarDanmaku(it, "${danmaku.user} 进入了直播间", show)
+                when (type) {
+                    DANMU_MSG -> avatarDanmaku(it, "$user : $content", show)
+                    INTERACT_WORD -> avatarDanmaku(it, "$user 进入了直播间", show)
                     SEND_GIFT -> {
-                        val gift = danmaku.content as GiftInfo
-                        avatarDanmaku(it, "${danmaku.user} 送出了 ${gift.num} 个 ${gift.giftName}", show)
+                        val gift = content as GiftInfo
+                        avatarDanmaku(it, "$user 送出了 ${gift.num} 个 ${gift.giftName}", show)
                     }
                     else -> {
                     }
