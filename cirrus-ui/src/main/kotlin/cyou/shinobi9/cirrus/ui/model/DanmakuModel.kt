@@ -80,13 +80,11 @@ class DanmakuListModel(
 }
 
 internal fun ObservableList<DanmakuModel>.queueAdd(danmakuModel: DanmakuModel) {
-    moveDownAll()
+    moveDownAll { true }
     removeLast()
     add(danmakuModel)
 }
 
-fun <T> MutableList<T>.moveDownAll() {
-    for (i in 0..lastIndex) {
-        moveDownAt(i)
-    }
-}
+inline fun <T> MutableList<T>.moveDownAll(crossinline predicate: (T) -> Boolean) = asSequence().withIndex()
+    .filter { predicate.invoke(it.value) }
+    .forEach { moveDownAt(it.index) }
