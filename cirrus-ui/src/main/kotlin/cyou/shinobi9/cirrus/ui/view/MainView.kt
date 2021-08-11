@@ -12,6 +12,7 @@ import javafx.event.EventTarget
 import javafx.geometry.Orientation.VERTICAL
 import javafx.geometry.Pos.*
 import javafx.scene.control.ButtonBar.ButtonData.LEFT
+import javafx.scene.control.ListCell
 import javafx.scene.image.Image
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
@@ -43,7 +44,10 @@ class MainView : View("cirrus-ui") {
                                 prefHeight = 600.px
                                 alignment = BOTTOM_LEFT
                             }
-                            dispatchDifferentTypeMessage()
+                            listview(SortedFilteredList(danmakuListModel.observableDanmakuList)) {
+//                                setCellFactory { ()->DanmakuListCell() }
+                            }
+//                            dispatchDifferentTypeMessage()
                         }
                     }
                 }
@@ -147,6 +151,10 @@ class MainView : View("cirrus-ui") {
                 currentStage?.y = event.screenY - yOffset
             }
         }
+    }
+
+    class DanmakuListCell : ListCell<DanmakuModel>() {
+
     }
 
     override fun onDock() {
