@@ -8,13 +8,15 @@ import cyou.shinobi9.cirrus.ui.model.DanmakuListModel
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
 import cyou.shinobi9.cirrus.ui.model.LoginModel
 import cyou.shinobi9.cirrus.ui.model.RoomModel
+import javafx.collections.ListChangeListener
 import javafx.event.EventTarget
 import javafx.geometry.Orientation.VERTICAL
 import javafx.geometry.Pos.*
 import javafx.scene.control.ButtonBar.ButtonData.LEFT
 import javafx.scene.control.ListCell
 import javafx.scene.image.Image
-import javafx.scene.paint.Color
+import javafx.scene.layout.HBox
+import javafx.scene.paint.Color.*
 import javafx.scene.shape.Circle
 import javafx.stage.Stage
 import tornadofx.*
@@ -40,27 +42,34 @@ class MainView : View("cirrus-ui") {
                         label(roomModel.room.popularityDescProp)
                         vbox {
                             style {
-                                padding = box(10.px)
+//                                padding = box(10.px)
                                 prefHeight = 600.px
                                 alignment = BOTTOM_LEFT
+                                spacing = 10.px
                             }
-                            val sortedFilterList = SortedFilteredList(danmakuListModel.observableDanmakuList)
-                            listview(sortedFilterList) {
+                            button("clear") {
+                                action {
+                                    danmakuListModel.observableDanmakuList.clear()
+                                }
+                            }
+                            separator {
+                            }
+                            listview(danmakuListModel.observableDanmakuList) {
                                 style {
                                     prefHeight = 200.px
                                     prefWidth = 400.px
                                     alignment = BOTTOM_LEFT
                                 }
-                                setCellFactory { DanmakuListCell() }
-//                                items.addListener(
-//                                    WeakListChangeListener {
-//                                        while (it.next()) {
-//                                            if (it.wasAdded()) {
-//                                                scrollTo(Integer.MAX_VALUE)
-//                                            }
-//                                        }
-//                                    }
-//                                )
+                                setCellFactory { DanmakuListCell(danmakuListModel) }
+                                items.addListener(
+                                    ListChangeListener {
+                                        while (it.next()) {
+                                            if (it.wasAdded()) {
+                                                scrollTo(Int.MAX_VALUE)
+                                            }
+                                        }
+                                    }
+                                )
                             }
                         }
                     }
@@ -69,7 +78,7 @@ class MainView : View("cirrus-ui") {
             right {
                 vbox {
                     style {
-                        backgroundColor += Color.web("#000000", 0.1)
+                        backgroundColor += web("#000000", 0.1)
                     }
                     form {
                         fieldset(title) {
@@ -167,14 +176,52 @@ class MainView : View("cirrus-ui") {
         }
     }
 
-    class DanmakuListCell : ListCell<DanmakuModel>() {
+    class DanmakuListCell(private val danmakuListModel: DanmakuListModel) : ListCell<DanmakuModel>() {
+        private fun EventTarget.avatarDanmaku(model: DanmakuModel, text: String, showAvatar: Boolean) = hbox {
+            style {
+                alignment = CENTER_LEFT
+//                spacing = 5.px
+//                borderColor += box(BLUE)
+            }
+            if (showAvatar) {
+                imageview {
+                    image = Image(cacheManager.resolveAvatar(model.danmaku.id), 30.0, 30.0, true, true, true)
+                    fitWidth = 30.0
+                    fitHeight = 30.0
+                    clip = Circle(15.0, 15.0, 15.0, AQUA)
+                }
+            }
+            label(text) {
+                textFill = WHITE
+            }
+        }
+
+        private fun DanmakuModel.toHBoxItem(): HBox {
+            val model = this@toHBoxItem
+            return hbox {
+                with(danmaku) {
+                    val show = danmakuListModel.showAvatar
+                    when (type) {
+                        DANMU_MSG -> avatarDanmaku(model, "$user : $content", show)
+                        INTERACT_WORD -> avatarDanmaku(model, "$user 进入了直播间", show)
+                        SEND_GIFT -> {
+                            val gift = content as GiftInfo
+                            avatarDanmaku(model, "$user 送出了 ${gift.num} 个 ${gift.giftName}", show)
+                        }
+                        else -> {
+                        }
+                    }
+                }
+            }
+        }
+
         override fun updateItem(item: DanmakuModel?, empty: Boolean) {
             super.updateItem(item, empty)
 
             graphic = if (empty || item == null) {
                 null
             } else {
-                val text = label("${item.danmaku.user} : ${item.danmaku.content}")
+                val text = item.toHBoxItem()
                 text
             }
         }
@@ -182,44 +229,5 @@ class MainView : View("cirrus-ui") {
 
     override fun onDock() {
         currentStage?.scene?.fill = null
-    }
-
-    private fun EventTarget.dispatchDifferentTypeMessage() = bindChildren(danmakuListModel.danmakusProperty) {
-        hbox {
-            style {
-                padding = box(2.px, 0.px)
-            }
-            with(it.danmaku) {
-                val show = danmakuListModel.showAvatar
-                when (type) {
-                    DANMU_MSG -> avatarDanmaku(it, "$user : $content", show)
-                    INTERACT_WORD -> avatarDanmaku(it, "$user 进入了直播间", show)
-                    SEND_GIFT -> {
-                        val gift = content as GiftInfo
-                        avatarDanmaku(it, "$user 送出了 ${gift.num} 个 ${gift.giftName}", show)
-                    }
-                    else -> {
-                    }
-                }
-            }
-        }
-    }
-
-    private fun EventTarget.avatarDanmaku(model: DanmakuModel, text: String, showAvatar: Boolean) = hbox {
-        style {
-            alignment = CENTER_LEFT
-            spacing = 5.px
-        }
-        if (showAvatar) {
-            imageview {
-                image = Image(cacheManager.resolveAvatar(model.danmaku.id), 30.0, 30.0, true, true, true)
-                fitWidth = 30.0
-                fitHeight = 30.0
-                clip = Circle(15.0, 15.0, 15.0, Color.AQUA)
-            }
-        }
-        label(text) {
-            textFill = Color.WHITE
-        }
     }
 }

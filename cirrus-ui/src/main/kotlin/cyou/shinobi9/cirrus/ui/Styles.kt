@@ -5,7 +5,6 @@ package cyou.shinobi9.cirrus.ui
 import javafx.scene.layout.BackgroundRepeat
 import javafx.scene.paint.Color.*
 import tornadofx.*
-import tornadofx.FXVisibility.*
 
 class Styles : Stylesheet() {
     companion object {
@@ -41,7 +40,7 @@ class Styles : Stylesheet() {
         }
 
         listView {
-            borderColor += box(RED)
+//            borderColor += box(RED)
             backgroundColor += TRANSPARENT
         }
 
@@ -51,6 +50,7 @@ class Styles : Stylesheet() {
         }
 
         listCell {
+            padding = box(2.px, 0.px)
             backgroundColor += TRANSPARENT
         }
     }
