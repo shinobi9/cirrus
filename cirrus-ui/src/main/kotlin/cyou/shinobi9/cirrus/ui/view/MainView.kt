@@ -44,10 +44,24 @@ class MainView : View("cirrus-ui") {
                                 prefHeight = 600.px
                                 alignment = BOTTOM_LEFT
                             }
-                            listview(SortedFilteredList(danmakuListModel.observableDanmakuList)) {
-//                                setCellFactory { ()->DanmakuListCell() }
+                            val sortedFilterList = SortedFilteredList(danmakuListModel.observableDanmakuList)
+                            listview(sortedFilterList) {
+                                style {
+                                    prefHeight = 200.px
+                                    prefWidth = 400.px
+                                    alignment = BOTTOM_LEFT
+                                }
+                                setCellFactory { DanmakuListCell() }
+//                                items.addListener(
+//                                    WeakListChangeListener {
+//                                        while (it.next()) {
+//                                            if (it.wasAdded()) {
+//                                                scrollTo(Integer.MAX_VALUE)
+//                                            }
+//                                        }
+//                                    }
+//                                )
                             }
-//                            dispatchDifferentTypeMessage()
                         }
                     }
                 }
@@ -154,7 +168,16 @@ class MainView : View("cirrus-ui") {
     }
 
     class DanmakuListCell : ListCell<DanmakuModel>() {
+        override fun updateItem(item: DanmakuModel?, empty: Boolean) {
+            super.updateItem(item, empty)
 
+            graphic = if (empty || item == null) {
+                null
+            } else {
+                val text = label("${item.danmaku.user} : ${item.danmaku.content}")
+                text
+            }
+        }
     }
 
     override fun onDock() {

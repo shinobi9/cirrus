@@ -62,13 +62,9 @@ class DanmakuModel(
 const val MAX_SIZE = 10
 
 class DanmakuListModel(
-    val observableDanmakuList: ObservableList<DanmakuModel> = mutableListOf<DanmakuModel>().apply {
-        repeat(MAX_SIZE) {
-            add(DanmakuModel(Danmaku(0, "", MAX_SIZE, UNKNOWN)))
-        }
-    }.asObservable(),
+    val observableDanmakuList: ObservableList<DanmakuModel> = mutableListOf<DanmakuModel>().asObservable(),
     @Suppress("MemberVisibilityCanBePrivate")
-    val showAvatarProp: BooleanProperty = booleanProperty(true),
+    val showAvatarProp: BooleanProperty = booleanProperty(false),
 
 ) : ViewModel() {
     var showAvatar: Boolean by showAvatarProp
@@ -80,11 +76,15 @@ class DanmakuListModel(
 }
 
 internal fun ObservableList<DanmakuModel>.queueAdd(danmakuModel: DanmakuModel) {
-    moveDownAll { true }
-    removeLast()
+    if (size > MAX_SIZE) {
+        removeFirst().doClear()
+    }
     add(danmakuModel)
+//    moveDownAll { true }
+//    removeLast()
+//    add(danmakuModel)
 }
 
-inline fun <T> MutableList<T>.moveDownAll(crossinline predicate: (T) -> Boolean) = asSequence().withIndex()
+inline fun <T> MutableList<T>.moveDownAll(crossinline predicate: (T) -> Boolean) = withIndex()
     .filter { predicate.invoke(it.value) }
     .forEach { moveDownAt(it.index) }
