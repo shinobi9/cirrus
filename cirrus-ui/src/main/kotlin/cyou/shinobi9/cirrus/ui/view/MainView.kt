@@ -52,8 +52,7 @@ class MainView : View("cirrus-ui") {
                                     danmakuListModel.observableDanmakuList.clear()
                                 }
                             }
-                            separator {
-                            }
+                            separator()
                             listview(danmakuListModel.observableDanmakuList) {
                                 style {
                                     prefHeight = 200.px
