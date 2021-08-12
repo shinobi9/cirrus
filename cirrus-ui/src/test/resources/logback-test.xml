@@ -8,7 +8,7 @@
         <file>${user.dir}/log/cirrus-ui.test.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>cirrus-ui.test.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${user.dir}/log/cirrus-ui.test.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- keep 30 days' worth of history capped at 100MB total size -->
             <maxHistory>30</maxHistory>
