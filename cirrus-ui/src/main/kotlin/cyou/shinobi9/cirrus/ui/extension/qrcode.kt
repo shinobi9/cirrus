@@ -19,5 +19,5 @@ fun simpleQrcode(content: String): ByteArray {
     map[EncodeHintType.MARGIN] = 2
     val bitMatrix = MultiFormatWriter().encode(content, BarcodeFormat.QR_CODE, WIDTH, HEIGHT, map)
     MatrixToImageWriter.writeToStream(bitMatrix, PNG, byteOutputStream)
-    return byteOutputStream.bytes
+    return byteOutputStream.toByteArray()
 }
