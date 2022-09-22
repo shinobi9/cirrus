@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "cyou.shinobi9"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     mavenCentral()
