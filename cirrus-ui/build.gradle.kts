@@ -27,10 +27,10 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
     implementation("io.github.rybalkinsd:kohttp-jackson:0.12.0")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4") {
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0") {
         exclude("org.jetbrains.kotlin", "kotlin-reflect")
     }
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.1-native-mt")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.5.2-native-mt")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("com.google.zxing:core:$zxing_version")
     implementation("com.google.zxing:javase:$zxing_version")
@@ -54,15 +54,10 @@ tasks.withType<Jar> {
 
 tasks.register<Jar>("uber") {
     archiveClassifier.set("uber")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-    }, {
-        exclude("META-INF/MANIFEST.MF")
-        exclude("META-INF/LICENSE")
-        exclude("module-info.class")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/versions/9/module-info.class")
     })
 }

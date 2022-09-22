@@ -5,7 +5,7 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
+import java.io.ByteArrayOutputStream
 
 const val WIDTH = 150
 const val HEIGHT = 150
@@ -13,7 +13,7 @@ const val PNG = "png"
 
 fun simpleQrcode(content: String): ByteArray {
     val map = mutableMapOf<EncodeHintType, Any>()
-    val byteOutputStream = ByteOutputStream()
+    val byteOutputStream = ByteArrayOutputStream()
     map[EncodeHintType.CHARACTER_SET] = "UTF-8"
     map[EncodeHintType.ERROR_CORRECTION] = ErrorCorrectionLevel.M
     map[EncodeHintType.MARGIN] = 2
