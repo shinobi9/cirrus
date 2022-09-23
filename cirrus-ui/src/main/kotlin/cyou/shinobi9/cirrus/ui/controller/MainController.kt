@@ -30,7 +30,7 @@ class MainController : Controller(), CoroutineScope {
         if (backend.runningJob()) {
             backend.stopAll()
         }
-        backend.connectToBLive(roomModel.roomId)
+        backend.connectToBLive(requireNotNull(roomModel.roomId.toIntOrNull()) { "房间号不能为空" })
     }
 
     private fun configureHandler(danmakuListModel: DanmakuListModel, roomModel: RoomModel): MessageHandler {

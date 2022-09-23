@@ -3,9 +3,9 @@ package cyou.shinobi9.cirrus.ui.cache
 import cyou.shinobi9.cirrus.network.userAvatar
 import cyou.shinobi9.cirrus.ui.LOG
 import cyou.shinobi9.cirrus.ui.defaultCookiesClient
+import io.ktor.http.*
 import kotlinx.coroutines.*
 import java.io.File
-import java.io.InputStream
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
@@ -39,64 +39,71 @@ class CacheManager : CoroutineScope {
     private fun checkExist() {
         if (!root.exists()) root.createDirectories()
     }
+
     private fun checkAvatarExist() {
         if (!avatar.exists()) avatar.createDirectories()
     }
-    @Suppress("SameParameterValue")
-    private fun resolveInDisk(dir: String, key: String): Pair<Boolean, InputStream?> {
-        val path = Path("""${root.absolutePathString()}${File.separator}$dir""")
-        val files = path.toFile().listFiles()
-        val file = files?.singleOrNull { it.name.split(".")[0] == key }
-        return if (file != null) {
-            LOG.debug { "resolve from ${file.absolutePath}" }
-            true to file.inputStream()
-        } else false to null
-    }
 
-    private fun resolveByHttp(id: Int): Triple<Boolean, InputStream?, String?> {
-        return runBlocking {
-            val imageUrl = defaultCookiesClient.userAvatar(id)
-            LOG.debug { imageUrl }
-            val url = URL(imageUrl)
-            val ext = url.path.replace("/", "").split(".")[1]
-            val name = """$id.$ext"""
-            Triple(true, url.openStream(), name)
+    @Suppress("SameParameterValue")
+    private suspend fun resolveInDisk(dir: String, key: String): Pair<Boolean, String?> =
+        withContext(Dispatchers.IO) {
+            val path = Path("""${root.absolutePathString()}${File.separator}$dir""")
+            val files = path.toFile().listFiles()
+            val file = files?.singleOrNull { it.name.split(".")[0] == key }
+            return@withContext if (file != null) {
+                LOG.debug { "resolve from ${file.absolutePath}" }
+                true to file.toURI().toString()
+            } else false to null
         }
+
+    private suspend fun resolveByHttp(id: Int): Triple<Boolean, String?, String?> = withContext(Dispatchers.IO) {
+        val imageUrl = defaultCookiesClient.userAvatar(id)
+        val mini = "$imageUrl@30w_30h_1o.jpg"
+        LOG.debug { mini }
+        val ext = "jpg"
+        val name = """$id.$ext"""
+        return@withContext Triple(true, mini, name)
     }
 
-    @Suppress("SameParameterValue")
-    private fun save(dir: String, key: String, inputStream: InputStream): Path {
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private suspend fun save(dir: String, key: String, url: String): Path = withContext(Dispatchers.IO) {
         val path = Path("""${root.absolutePathString()}${File.separator}$dir${File.separator}$key""")
         LOG.debug { "save to ${path.absolutePathString()}" }
-        Files.copy(inputStream, path)
-        return path
+        Files.copy(URL(url).openStream(), path)
+        return@withContext path
     }
 
-    fun resolveAvatar(id: Int): InputStream? {
+    fun resolveAvatar(id: Int): String? {
+        return runBlocking { withContext(Dispatchers.IO) { doResolveAvatar(id) } }
+    }
+
+    private suspend fun doResolveAvatar(id: Int): String? {
         checkExist()
         checkAvatarExist()
-        val (onDisk, inputStream) = resolveInDisk(AVATAR_DIR, id.toString())
+        val (onDisk, fileUrl) = resolveInDisk(AVATAR_DIR, id.toString())
         if (onDisk) {
-            return inputStream!!
+            return fileUrl!!
         }
-        val (result, stream, name) = resolveByHttp(id)
+        val (result, url, name) = resolveByHttp(id)
         if (result) {
-            val path = save(AVATAR_DIR, name!!, stream!!)
-            return path.inputStream()
+            val path = save(AVATAR_DIR, name!!, url!!)
+            return path.toUri().toString()
         }
         return null
     }
 
-    fun clearCache() = launch {
-        withContext(currentCoroutineContext()) {
-            val files = root.parent.toFile().listFiles()
-            val tmpDirectories = files?.filter { it.isDirectory && it.name.startsWith(PREFIX) }.orEmpty()
-            LOG.debug { "delete $tmpDirectories" }
+    fun clearCache() {
+        launch {
+            withContext(Dispatchers.IO) {
+                val files = root.parent.toFile().listFiles()
+                val tmpDirectories = files?.filter { it.isDirectory && it.name.startsWith(PREFIX) }.orEmpty()
+                LOG.debug { "delete $tmpDirectories" }
 
-            tmpDirectories.forEach {
-                LOG.debug { "delete ${it.name}" }
-                it.recursiveDelete()
-                it.delete()
+                tmpDirectories.forEach {
+                    LOG.debug { "delete ${it.name}" }
+                    it.recursiveDelete()
+                    it.delete()
+                }
             }
         }
     }

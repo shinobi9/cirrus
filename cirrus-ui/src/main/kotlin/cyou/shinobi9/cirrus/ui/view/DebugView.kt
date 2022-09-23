@@ -29,8 +29,10 @@ class DebugView : View("cirrus-ui-debug") {
                     textfield(roomModel.room.roomIdProp)
                     button("connect") {
                         setOnAction {
-                            debugController.connectToBLive(roomModel.roomId, debugDanmakuModel)
-//                    model.danmakusProperty.add(Danmaku("shinobi", "you died"))
+                            debugController.connectToBLive(
+                                requireNotNull(roomModel.roomId.toIntOrNull()) { "房间号不能为空" },
+                                debugDanmakuModel
+                            )
                         }
                     }
                     button("stop") {

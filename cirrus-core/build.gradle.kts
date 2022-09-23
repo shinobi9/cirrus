@@ -8,10 +8,11 @@ val kotlin_version: String by project
 plugins {
     kotlin("jvm") apply true
     kotlin("plugin.serialization") version "1.5.21"
+    `maven-publish`
 }
 
 group = "cyou.shinobi9"
-version = "0.0.2"
+version = "0.0.4"
 
 repositories {
     mavenLocal()
@@ -36,7 +37,24 @@ dependencies {
     api("io.ktor:ktor-client-logging-jvm:$ktor_version")
     api("io.ktor:ktor-client-serialization:$ktor_version")
 //    api("org.jetbrains.kotlinx:atomicfu:0.16.2")
-    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-    api("io.github.microutils:kotlin-logging-jvm:2.0.10")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
+    api("io.github.microutils:kotlin-logging-jvm:2.0.11")
     testImplementation("ch.qos.logback:logback-classic:$logback_version")
+}
+
+val sourcesJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(kotlin.sourceSets["main"].kotlin.srcDirs)
+}
+
+publishing {
+    publications {
+        val kotlin by publications.registering(MavenPublication::class) {
+            from(components["kotlin"])
+            artifact(sourcesJar.get())
+            groupId = "com.github.shinobi9"
+            artifactId = "cirrus"
+            version = "0.0.4"
+        }
+    }
 }
