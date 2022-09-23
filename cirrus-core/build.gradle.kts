@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "cyou.shinobi9"
-version = "0.0.2"
+version = "0.0.3"
 
 repositories {
     mavenLocal()
@@ -49,12 +49,12 @@ val sourcesJar by tasks.registering(Jar::class) {
 
 publishing {
     publications {
-        val release by publications.registering(MavenPublication::class) {
+        val kotlin by publications.registering(MavenPublication::class) {
             from(components["kotlin"])
             artifact(sourcesJar.get())
             artifactId = "cirrus-core"
-            groupId = "cyou.shinobi9.cirrus-core"
-            version = "0.0.2"
+            groupId = "cyou.shinobi9"
+            version = "0.0.3"
         }
     }
 }
