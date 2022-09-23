@@ -8,6 +8,7 @@ val kotlin_version: String by project
 plugins {
     kotlin("jvm") apply true
     kotlin("plugin.serialization") version "1.5.21"
+    `maven-publish`
 }
 
 group = "cyou.shinobi9"
@@ -39,4 +40,15 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
     api("io.github.microutils:kotlin-logging-jvm:2.0.11")
     testImplementation("ch.qos.logback:logback-classic:$logback_version")
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("cirrus-core") {
+            groupId = "cyou.shinobi9"
+            artifactId = "cirrus-core"
+            version = "0.0.2"
+            from(components["kotlin"])
+        }
+    }
 }
