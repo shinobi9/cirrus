@@ -42,19 +42,20 @@ dependencies {
     testImplementation("ch.qos.logback:logback-classic:$logback_version")
 }
 
-val sourcesJar by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(kotlin.sourceSets["main"].kotlin.srcDirs)
-}
+// val sourcesJar by tasks.registering(Jar::class) {
+//    archiveClassifier.set("sources")
+//    from(kotlin.sourceSets["main"].kotlin.srcDirs)
+// }
 
 publishing {
     publications {
-        val kotlin by publications.registering(MavenPublication::class) {
-            from(components["kotlin"])
-            artifact(sourcesJar.get())
+        create<MavenPublication>("maven") {
             groupId = "com.github.shinobi9"
             artifactId = "cirrus"
             version = "0.0.4"
+            from(components["java"])
+//            from(components["kotlin"])
+//            artifact(sourcesJar.get())
         }
     }
 }
