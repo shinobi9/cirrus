@@ -52,8 +52,8 @@ publishing {
         val kotlin by publications.registering(MavenPublication::class) {
             from(components["kotlin"])
             artifact(sourcesJar.get())
+            groupId = "com.github.shinobi9.cirrus"
             artifactId = "cirrus-core"
-            groupId = "cyou.shinobi9"
             version = "0.0.3"
         }
     }
