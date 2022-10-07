@@ -56,7 +56,7 @@ class CacheManager : CoroutineScope {
             } else false to null
         }
 
-    private suspend fun resolveByHttp(id: Int): Triple<Boolean, String?, String?> = withContext(Dispatchers.IO) {
+    private suspend fun resolveByHttp(id: Long): Triple<Boolean, String?, String?> = withContext(Dispatchers.IO) {
         val imageUrl = defaultCookiesClient.userAvatar(id)
         val mini = "$imageUrl@30w_30h_1o.jpg"
         LOG.debug { mini }
@@ -73,11 +73,11 @@ class CacheManager : CoroutineScope {
         return@withContext path
     }
 
-    fun resolveAvatar(id: Int): String? {
+    fun resolveAvatar(id: Long): String? {
         return runBlocking { withContext(Dispatchers.IO) { doResolveAvatar(id) } }
     }
 
-    private suspend fun doResolveAvatar(id: Int): String? {
+    private suspend fun doResolveAvatar(id: Long): String? {
         checkExist()
         checkAvatarExist()
         val (onDisk, fileUrl) = resolveInDisk(AVATAR_DIR, id.toString())

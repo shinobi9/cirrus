@@ -23,7 +23,7 @@ class DebugDanmakuModel(val observableDebugDanmakuList: ObservableList<DebugDanm
 }
 
 data class Danmaku(
-    val id: Int,
+    val id: Long,
     val user: String,
     val content: Any?,
     val type: CMD,
@@ -39,7 +39,7 @@ class DanmakuModel(
     }
 
     val imageProp = objectBinding(danmaku.id) {
-        if (this == 0) null else
+        if (this == 0L) null else
             Image(
                 cacheManager.resolveAvatar(this), 30.0, 30.0, true, true, true
             )

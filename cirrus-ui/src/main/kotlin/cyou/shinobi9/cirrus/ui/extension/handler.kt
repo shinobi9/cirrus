@@ -26,13 +26,13 @@ internal suspend fun handleMessage(rawJsonStr: String, container: ObservableList
         DANMU_MSG -> {
             val info = root.jsonObject["info"]!!.jsonArray
             val said = info[1].jsonPrimitive.content
-            val id = info[2].jsonArray[0].jsonPrimitive.int
+            val id = info[2].jsonArray[0].jsonPrimitive.long
             val user = info[2].jsonArray[1].jsonPrimitive.content
             pushToVM(container, Danmaku(id, user, said, DANMU_MSG))
         }
         SEND_GIFT -> {
             val data = root.jsonObject["data"]!!.jsonObject
-            val id = data["uid"]?.jsonPrimitive?.int!!
+            val id = data["uid"]?.jsonPrimitive?.long!!
             val user = data["uname"]!!.jsonPrimitive.content
             val num = data["num"]!!.jsonPrimitive.int
             val giftName = data["giftName"]!!.jsonPrimitive.content
@@ -41,19 +41,19 @@ internal suspend fun handleMessage(rawJsonStr: String, container: ObservableList
         WELCOME -> {
             val data = root.jsonObject["data"]!!.jsonObject
             val user = data["uname"]!!.jsonPrimitive.content
-            val id = data["uid"]?.jsonPrimitive?.int // may not be correct
-            pushToVM(container, Danmaku(id ?: 0, user, "", WELCOME))
+            val id = data["uid"]?.jsonPrimitive?.long // may not be correct
+            pushToVM(container, Danmaku(id ?: 0L, user, "", WELCOME))
         }
         WELCOME_GUARD -> {
             val data = root.jsonObject["data"]!!.jsonObject
             val user = data["username"]!!.jsonPrimitive.content
-            val id = data["uid"]?.jsonPrimitive?.int // may not be correct
-            pushToVM(container, Danmaku(id ?: 0, user, "", WELCOME_GUARD))
+            val id = data["uid"]?.jsonPrimitive?.long // may not be correct
+            pushToVM(container, Danmaku(id ?: 0L, user, "", WELCOME_GUARD))
         }
         INTERACT_WORD -> {
             val data = root.jsonObject["data"]!!.jsonObject
             val user = data["uname"]!!.jsonPrimitive.content
-            val id = data["uid"]?.jsonPrimitive?.int!!
+            val id = data["uid"]?.jsonPrimitive?.long!!
             pushToVM(container, Danmaku(id, user, "", INTERACT_WORD))
         }
         else -> {
@@ -67,5 +67,3 @@ internal suspend fun pushToVM(container: ObservableList<DanmakuModel>, danmaku: 
         container.queueAdd(DanmakuModel(danmaku))
     }
 }
-
-

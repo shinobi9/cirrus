@@ -52,7 +52,7 @@ data class Server(
     val port: Int
 )
 
-suspend fun HttpClient.userAvatar(uid: Int): String {
+suspend fun HttpClient.userAvatar(uid: Long): String {
     val response = get<JsonElement>("https://api.bilibili.com/x/space/acc/info") {
         parameter("mid", uid)
     }

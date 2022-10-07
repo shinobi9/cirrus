@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "cyou.shinobi9"
-version = "0.0.4"
+version = "0.0.5"
 
 repositories {
     mavenLocal()
@@ -52,7 +52,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.github.shinobi9"
             artifactId = "cirrus"
-            version = "0.0.4"
+            version = "0.0.5"
             from(components["java"])
 //            from(components["kotlin"])
 //            artifact(sourcesJar.get())
