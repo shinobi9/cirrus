@@ -80,9 +80,9 @@ internal val defaultClient = HttpClient(CIO) {
     install(JsonFeature) {
         serializer = KotlinxSerializer(json)
     }
-    engine {
-        proxy = ProxyBuilder.http("http://127.0.0.1:7890")
-    }
+//    engine {
+//        proxy = ProxyBuilder.http("http://127.0.0.1:7890")
+//    }
 }
 
 internal val defaultCookiesClient = defaultClient.config {

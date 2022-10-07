@@ -8,6 +8,7 @@ import cyou.shinobi9.cirrus.ui.model.DanmakuListModel
 import cyou.shinobi9.cirrus.ui.model.DanmakuModel
 import cyou.shinobi9.cirrus.ui.model.LoginModel
 import cyou.shinobi9.cirrus.ui.model.RoomModel
+import javafx.beans.property.BooleanProperty
 import javafx.collections.ListChangeListener
 import javafx.event.EventTarget
 import javafx.geometry.Orientation.VERTICAL
@@ -176,20 +177,21 @@ class MainView : View("cirrus-ui") {
     }
 
     class DanmakuListCell(private val danmakuListModel: DanmakuListModel) : ListCell<DanmakuModel>() {
-        private fun EventTarget.avatarDanmaku(model: DanmakuModel, text: String, showAvatar: Boolean) = hbox {
+        private fun EventTarget.avatarDanmaku(model: DanmakuModel, text: String, showAvatar: BooleanProperty) = hbox {
             style {
                 alignment = CENTER_LEFT
 //                spacing = 5.px
 //                borderColor += box(BLUE)
             }
-            if (showAvatar) {
-                imageview {
-                    image = Image(cacheManager.resolveAvatar(model.danmaku.id), 30.0, 30.0, true, true, true)
-                    fitWidth = 30.0
-                    fitHeight = 30.0
-                    clip = Circle(15.0, 15.0, 15.0, AQUA)
-                }
+            imageview {
+                image = Image(cacheManager.resolveAvatar(model.danmaku.id), 30.0, 30.0, true, true, true)
+                fitWidth = 30.0
+                fitHeight = 30.0
+                clip = Circle(15.0, 15.0, 15.0, AQUA)
+                visibleWhen(showAvatar)
+                managedProperty().bind(visibleProperty())
             }
+
             label(text) {
                 textFill = WHITE
             }
@@ -199,7 +201,7 @@ class MainView : View("cirrus-ui") {
             val model = this@toHBoxItem
             return hbox {
                 with(danmaku) {
-                    val show = danmakuListModel.showAvatar
+                    val show = danmakuListModel.showAvatarProp
                     when (type) {
                         DANMU_MSG -> avatarDanmaku(model, "$user : $content", show)
                         INTERACT_WORD -> avatarDanmaku(model, "$user 进入了直播间", show)
