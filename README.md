@@ -24,3 +24,15 @@ gradlew :cirrus-ui:uber
 ### problem
 
 - ...
+
+### use as a lib
+```
+repositories {
+	...
+	maven("https://jitpack.io")
+}
+
+dependencies {
+	implementation("com.github.shinobi9:cirrus:0.0.5")
+}
+```
