@@ -17,8 +17,9 @@ jobs:
     - name: set up JDK 8
       uses: actions/setup-java@v3
       with:
-        java-version: '8.0.372+7'
-        distribution: 'zulu'
+        java-version: 8.0.372+7
+        distribution: zulu
+        java-package: jdk+fx
         cache: gradle
 
     - name: grant execute permission for gradlew
